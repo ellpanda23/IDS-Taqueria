@@ -4,7 +4,13 @@
  */
 package Interfaces;
 
+import Clases.Facturas;
+import DAOS.DAOFACTURAS;
 import DAOS.DAOVENTAS;
+import java.awt.event.FocusEvent;
+import java.util.ArrayList;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
 
 
@@ -20,7 +26,35 @@ public class ReporteDetallado extends javax.swing.JFrame {
      */
     public ReporteDetallado() {
         initComponents();
-        //DAOVENTAS.consultarTodos();
+        try {
+            // Crear el objeto de DAOFacturas
+            DAOFACTURAS daoFacturas = new DAOFACTURAS();
+            // Obtener los datos de la base de datos
+            ArrayList<Facturas> listaFacturas = daoFacturas.consultarTodos();
+
+            // Crear un nuevo modelo de tabla con los datos de la consulta
+            String[] columnas = {"Factura", "Fecha", "Empleado", "Cliente", "Precio", "Detalles"};
+            DefaultTableModel modelo = new DefaultTableModel(columnas, 0);
+            for (Facturas factura : listaFacturas) {
+                Object[] fila = {
+                    factura.getFacid(),
+                    factura.getFecha(),
+                    factura.getEmpleado(),
+                    factura.getCliente(),
+                    factura.getTotal(),
+                    "Detalles"
+                };
+                modelo.addRow(fila);
+            }
+
+            // Establecer el nuevo modelo de tabla en la tabla
+            tblReporte.setModel(modelo);
+
+        } catch (Exception ex) {
+            // Manejar la excepción adecuadamente
+            ex.printStackTrace();
+        }
+
     }
 
     /**
@@ -52,8 +86,34 @@ public class ReporteDetallado extends javax.swing.JFrame {
         jLabel2.setText("Hasta:");
 
         txtHasta.setText("dd/mm/aaaa");
+        txtHasta.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                txtHastaFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtHastaFocusLost(evt);
+            }
+        });
+        txtHasta.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtHastaKeyTyped(evt);
+            }
+        });
 
         txtDesde.setText("dd/mm/aaaa");
+        txtDesde.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                txtDesdeFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtDesdeFocusLost(evt);
+            }
+        });
+        txtDesde.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtDesdeKeyTyped(evt);
+            }
+        });
 
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
@@ -62,11 +122,24 @@ public class ReporteDetallado extends javax.swing.JFrame {
 
         txtBuscar.setText("Buscar venta");
         txtBuscar.setMargin(new java.awt.Insets(2, 45, 2, 6));
+        txtBuscar.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                txtBuscarFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtBuscarFocusLost(evt);
+            }
+        });
         jPanel1.add(txtBuscar, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 20, 220, 50));
 
         btnBuscar.setBackground(new java.awt.Color(51, 102, 255));
         btnBuscar.setForeground(new java.awt.Color(255, 255, 255));
         btnBuscar.setText("Buscar");
+        btnBuscar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBuscarActionPerformed(evt);
+            }
+        });
 
         tblReporte.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -97,11 +170,17 @@ public class ReporteDetallado extends javax.swing.JFrame {
         jScrollPane1.setViewportView(tblReporte);
         if (tblReporte.getColumnModel().getColumnCount() > 0) {
             tblReporte.getColumnModel().getColumn(0).setResizable(false);
+            tblReporte.getColumnModel().getColumn(0).setHeaderValue("Factura");
             tblReporte.getColumnModel().getColumn(1).setResizable(false);
+            tblReporte.getColumnModel().getColumn(1).setHeaderValue("Fecha");
             tblReporte.getColumnModel().getColumn(2).setResizable(false);
+            tblReporte.getColumnModel().getColumn(2).setHeaderValue("Empleado");
             tblReporte.getColumnModel().getColumn(3).setResizable(false);
+            tblReporte.getColumnModel().getColumn(3).setHeaderValue("Cliente");
             tblReporte.getColumnModel().getColumn(4).setResizable(false);
+            tblReporte.getColumnModel().getColumn(4).setHeaderValue("Precio");
             tblReporte.getColumnModel().getColumn(5).setResizable(false);
+            tblReporte.getColumnModel().getColumn(5).setHeaderValue("Detalles");
         }
 
         btnGenerar.setBackground(new java.awt.Color(255, 51, 51));
@@ -173,9 +252,134 @@ public class ReporteDetallado extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    
+
+    
     private void btnGenerarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGenerarActionPerformed
         
     }//GEN-LAST:event_btnGenerarActionPerformed
+
+    private void txtDesdeFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtDesdeFocusGained
+        if(txtDesde.getText().matches("dd/mm/aaaa"))
+            txtDesde.setText("");
+        else
+            txtDesde.selectAll();
+    }//GEN-LAST:event_txtDesdeFocusGained
+
+    private void txtDesdeKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtDesdeKeyTyped
+        // Borra la selección actual si existe
+        txtDesde.replaceSelection("");
+        
+        char c = evt.getKeyChar();
+
+        // Permitir solo números
+        if (!Character.isDigit(c)) {
+            evt.consume();
+        }
+
+        // Agregar el carácter separador "/" automáticamente después de ingresar el segundo y quinto carácter
+        String text = txtDesde.getText();
+        int length = text.length();
+        if ((length == 2 || length == 5) && !"/".equals(text.substring(length-1))) {
+            txtDesde.setText(text + "/");
+        }
+
+        // Restringir el formato de la fecha a dd/mm/aaaa
+        if (length >= 10) {
+            evt.consume();
+        }
+    }//GEN-LAST:event_txtDesdeKeyTyped
+
+    private void txtDesdeFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtDesdeFocusLost
+        if(txtDesde.getText().matches(""))
+            txtDesde.setText("dd/mm/aaaa");
+    }//GEN-LAST:event_txtDesdeFocusLost
+
+    private void txtHastaFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtHastaFocusGained
+        if(txtHasta.getText().matches("dd/mm/aaaa"))
+            txtHasta.setText("");
+        else
+            txtHasta.selectAll();
+    }//GEN-LAST:event_txtHastaFocusGained
+
+    private void txtHastaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtHastaFocusLost
+        if(txtHasta.getText().matches(""))
+            txtHasta.setText("dd/mm/aaaa");
+    }//GEN-LAST:event_txtHastaFocusLost
+
+    private void txtHastaKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtHastaKeyTyped
+        // Borra la selección actual si existe
+        txtHasta.replaceSelection("");
+        
+        char c = evt.getKeyChar();
+
+        // Permitir solo números
+        if (!Character.isDigit(c)) {
+            evt.consume();
+        }
+
+        // Agregar el carácter separador "/" automáticamente después de ingresar el segundo y quinto carácter
+        String text = txtHasta.getText();
+        int length = text.length();
+        if ((length == 2 || length == 5) && !"/".equals(text.substring(length-1))) {
+            txtHasta.setText(text + "/");
+        }
+
+        // Restringir el formato de la fecha a dd/mm/aaaa
+        if (length >= 10) {
+            evt.consume();
+        }
+    }//GEN-LAST:event_txtHastaKeyTyped
+
+    private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
+        if(txtDesde.getText().equals("dd/mm/aaaa") && txtHasta.getText().equals("dd/mm/aaaa") && txtBuscar.getText().equals("Buscar venta") ) {
+            JOptionPane.showMessageDialog(null, "Se debe ingresar un rango de fechas o buscar una venta por numero de factura, empleado, fecha o cliente", "Error", JOptionPane.ERROR_MESSAGE);
+        } else if(txtDesde.getText().equals("dd/mm/aaaa") && txtHasta.getText().equals("dd/mm/aaaa") && !txtBuscar.getText().equals("Buscar venta")) {
+            try {
+                // Crear el objeto de DAOFacturas
+                DAOFACTURAS daoFacturas = new DAOFACTURAS();
+                // Obtener los datos de la base de datos
+                ArrayList<Facturas> listaFacturas = daoFacturas.buscarFacturas(txtBuscar.getText());
+
+                // Crear un nuevo modelo de tabla con los datos de la consulta
+                String[] columnas = {"Factura", "Fecha", "Empleado", "Cliente", "Precio", "Detalles"};
+                DefaultTableModel modelo = new DefaultTableModel(columnas, 0);
+                for (Facturas factura : listaFacturas) {
+                    Object[] fila = {
+                        factura.getFacid(),
+                        factura.getFecha(),
+                        factura.getEmpleado(),
+                        factura.getCliente(),
+                        factura.getTotal(),
+                        "Detalles"
+                    };
+                    modelo.addRow(fila);
+                }
+
+                // Establecer el nuevo modelo de tabla en la tabla
+                tblReporte.setModel(modelo);
+
+            } catch (Exception ex) {
+                // Manejar la excepción adecuadamente
+                ex.printStackTrace();
+            }
+
+        }
+
+            
+    }//GEN-LAST:event_btnBuscarActionPerformed
+
+    private void txtBuscarFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtBuscarFocusGained
+        if(txtBuscar.getText().matches("Buscar venta"))
+            txtBuscar.setText("");
+        else
+            txtBuscar.selectAll();
+    }//GEN-LAST:event_txtBuscarFocusGained
+
+    private void txtBuscarFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtBuscarFocusLost
+        if(txtBuscar.getText().matches(""))
+            txtBuscar.setText("Buscar venta");
+    }//GEN-LAST:event_txtBuscarFocusLost
 
     /**
      * @param args the command line arguments

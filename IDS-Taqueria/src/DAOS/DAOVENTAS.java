@@ -1,4 +1,4 @@
-/*
+ /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
@@ -6,7 +6,8 @@ package DAOS;
 
 import Clases.Ordenes;
 import Clases.Ventas;
-import Conexion.CONEXION;
+import Clases.CONEXION;
+import Clases.Facturas;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -23,26 +24,26 @@ import javax.swing.JOptionPane;
  * @author Brayan
  */
 public class DAOVENTAS {
-    
+
     private int OrdenS = 0;
-    
+
     public DAOVENTAS() {
-        
+
     }
-    
+
     public int getOrdenS() {
         return OrdenS;
     }
-    
+
     public void setOrdenS(int OrdenS) {
         this.OrdenS = OrdenS;
     }
-    
+
     public double PyS(String N) {
         double precio = 0;
         try {
             if (CONEXION.conectar()) {
-                String sql = "SELECT PRECIO FROM Productos WHERE Nombre =" + "'" + N + "'";
+                String sql = "SELECT PRECIO FROM PLATILLOS WHERE Nombre =" + "'" + N + "'";
                 Statement consulta = CONEXION.conexion.createStatement();
                 ResultSet rsLista = consulta.executeQuery(sql);
                 while (rsLista.next()) {
@@ -54,7 +55,7 @@ public class DAOVENTAS {
         }
         return precio;
     }
-    
+
     public boolean agregarVarios(List<Ventas> ventas, Ordenes objOrden, int bandera) throws Exception {
         if (bandera == 0) {
             try {
@@ -114,7 +115,7 @@ public class DAOVENTAS {
         }
         return false;
     }
-    
+
     public void ActualizarL(String a, int b) {
         try {
             String sql = "UPDATE Ordenes SET Lugar = '" + a + "' WHERE orderid = " + b;
@@ -124,7 +125,9 @@ public class DAOVENTAS {
             JOptionPane.showMessageDialog(null, e);
         }
     }
-    
+
+  
+
     public int agregar(Ventas Ventas) throws Exception {
         try {
             if (CONEXION.conectar()) {
@@ -138,19 +141,19 @@ public class DAOVENTAS {
                 sentencia.setDouble(4, Ventas.getCantidad());
                 sentencia.setDouble(5, Ventas.getSubtotal());
                 sentencia.executeUpdate();
-                
+
             }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, "no se ha podido agregar");
         }
         return -1;
     }
-    
+
     public static double IdProduct(String N) {
         double id = 0;
         try {
             if (CONEXION.conectar()) {
-                String sql = "SELECT Productoid FROM Products WHERE Nombre =" + "'" + N + "'";
+                String sql = "SELECT Productoid FROM Platillos WHERE Nombre =" + "'" + N + "'";
                 Statement consulta = CONEXION.conexion.createStatement();
                 ResultSet rsLista = consulta.executeQuery(sql);
                 while (rsLista.next()) {
@@ -162,7 +165,7 @@ public class DAOVENTAS {
         }
         return id;
     }
-    
+//CONSULTA TODOS LOS PRODUCTOS DE UNA ORDEN(REGRESA UNA LISTA)
     public ArrayList<String> ConsultarEditar(int N) {
         ArrayList<String> lista = new ArrayList();
         try {
@@ -179,7 +182,7 @@ public class DAOVENTAS {
         }
         return lista;
     }
-    
+//BORRAR PLATILLO
     public boolean BorrarProducto(String a, int b) {
         try {
             if (CONEXION.conectar()) {
@@ -194,7 +197,7 @@ public class DAOVENTAS {
         }
         return false;
     }
-    
+//CONSULTA TODOS LOS DETALLES DE LAS ORDENES
     public ArrayList<Ventas> consultarTodos(int a) throws Exception {
         String sql = "SELECT Producto,Cantidad,Precio,Subtotal"
                 + "   FROM DETALLESORDEN where orderid =" + a;
@@ -222,7 +225,7 @@ public class DAOVENTAS {
 //            CONEXION.desconectar();
 //        }
     }
-    
+//REGRESA EL TOTAL DE UNA ORDEN
     public double TOTAL(double a) throws Exception {
         String sql = "SELECT Subtotal"
                 + "   FROM DETALLESORDEN where orderid =" + a;
@@ -245,7 +248,7 @@ public class DAOVENTAS {
 //            CONEXION.desconectar();
 //        }
     }
-    
+//CREAR EL TICKET
     public String consultarTodos1(int a) throws Exception {
         String sql = "SELECT Producto,Cantidad,Precio,Subtotal"
                 + "   FROM DETALLESORDEN where orderid =" + a;

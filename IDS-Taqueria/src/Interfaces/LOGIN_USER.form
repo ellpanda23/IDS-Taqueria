@@ -101,12 +101,9 @@
     <Component class="javax.swing.JLabel" name="jLabel1">
       <Properties>
         <Property name="horizontalAlignment" type="int" value="0"/>
-        <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-          <Image iconType="2" name="C:\Users\Brayan\OneDrive\Documentos\Uni5to semestre\Taller bd\PROYECTO\SANCHEZMONROYBRYAN_PROYECTO\TBD\src\Imagenes\Usuario-Icono.jpg"/>
-        </Property>
         <Property name="toolTipText" type="java.lang.String" value=""/>
         <Property name="cursor" type="java.awt.Cursor" editor="org.netbeans.modules.form.editors2.CursorEditor">
-          <Color id="Cursor Por defecto"/>
+          <Color id="Default Cursor"/>
         </Property>
       </Properties>
     </Component>

@@ -5,7 +5,7 @@
 package DAOS;
 
 import Clases.Productos;
-import Conexion.CONEXION;
+import Clases.CONEXION;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;

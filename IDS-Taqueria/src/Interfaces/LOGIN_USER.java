@@ -4,7 +4,7 @@
  */
 package Interfaces;
 
-import Conexion.CONEXION;
+import Clases.CONEXION;
 import java.awt.HeadlessException;
 import javax.swing.JOptionPane;
 
