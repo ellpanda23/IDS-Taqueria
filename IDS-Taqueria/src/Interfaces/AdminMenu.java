@@ -237,7 +237,9 @@ public class AdminMenu extends javax.swing.JFrame {
     }//GEN-LAST:event_btnPagosActionPerformed
 
     private void btnReporteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReporteActionPerformed
-        // MANDAR LLAMAR REPORTE
+        ReporteDetallado newframe = new ReporteDetallado();
+        newframe.setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_btnReporteActionPerformed
 
     private void btnUsuariosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUsuariosActionPerformed
@@ -245,7 +247,9 @@ public class AdminMenu extends javax.swing.JFrame {
     }//GEN-LAST:event_btnUsuariosActionPerformed
 
     private void btnRegresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegresarActionPerformed
-        // MANDAR LLAMAR REGRESAR
+        MenuPrincipal newframe = new MenuPrincipal();
+        newframe.setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_btnRegresarActionPerformed
 
     /**

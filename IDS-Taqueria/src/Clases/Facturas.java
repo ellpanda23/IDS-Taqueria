@@ -10,17 +10,28 @@ package Clases;
  */
 public class Facturas {
 
-    int Facid, Cliente, Empleado;
+    int Facid;
+    Cliente cliente;
+    Empleado empleado;
     String Fecha;
     double Total;
 
-    public Facturas(int Facid, int Cliente, int Empleado, String Fecha, double Total) {
+    public Facturas(int Facid, int clienteId, int empleadoId, String Fecha, double Total) {
         this.Facid = Facid;
-        this.Cliente = Cliente;
-        this.Empleado = Empleado;
+        this.cliente = new Cliente(clienteId);
+        this.empleado = new Empleado(empleadoId);
         this.Fecha = Fecha;
         this.Total = Total;
     }
+
+    public Facturas(int Facid, Cliente cliente, Empleado empleado, String Fecha, double Total) {
+        this.Facid = Facid;
+        this.cliente = cliente;
+        this.empleado = empleado;
+        this.Fecha = Fecha;
+        this.Total = Total;
+    }
+
 
     public int getFacid() {
         return Facid;
@@ -30,21 +41,22 @@ public class Facturas {
         this.Facid = Facid;
     }
 
-    public int getCliente() {
-        return Cliente;
+   public Cliente getCliente() {
+        return cliente;
     }
 
-    public void setCliente(int Cliente) {
-        this.Cliente = Cliente;
+    public void setCliente(Cliente cliente) {
+        this.cliente = cliente;
     }
 
-    public int getEmpleado() {
-        return Empleado;
+    public Empleado getEmpleado() {
+        return empleado;
     }
 
-    public void setEmpleado(int Empleado) {
-        this.Empleado = Empleado;
+    public void setEmpleado(Empleado empleado) {
+        this.empleado = empleado;
     }
+
 
     public String getFecha() {
         return Fecha;

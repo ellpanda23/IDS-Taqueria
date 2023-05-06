@@ -11,10 +11,18 @@ package Clases;
 public class Platillos {
     private int idproducto;
     private String Nombre;
+    private double precio;
 
     public Platillos(int idproducto, String Nombre) {
         this.idproducto = idproducto;
         this.Nombre = Nombre;
+    }
+    
+    public Platillos(int idproducto, String nombre, double precio)
+    {
+        this.idproducto = idproducto;
+        this.Nombre = nombre;
+        this.precio = precio;
     }
 
     public int getIdproducto() {
@@ -32,6 +40,16 @@ public class Platillos {
     public void setNombre(String Nombre) {
         this.Nombre = Nombre;
     }
+
+    public double getPrecio() {
+        return precio;
+    }
+
+    public void setPrecio(double precio) {
+        this.precio = precio;
+    }
+    
+    
 
 
 }
