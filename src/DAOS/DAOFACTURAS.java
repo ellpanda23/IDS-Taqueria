@@ -5,6 +5,7 @@
 package DAOS;
 
 import Clases.CONEXION;
+
 import Clases.Cliente;
 import Clases.Empleado;
 import Clases.Facturas;
@@ -24,64 +25,6 @@ import javax.swing.JOptionPane;
  * @author Brayan
  */
 public class DAOFACTURAS {
-
-    /*public ArrayList<Facturas> consultarTodos() throws Exception {
-        String sql = "SELECT * FROM Facturas order by facturaid asc";
-        try {
-            if (CONEXION.conectar()) {
-                Statement consulta = CONEXION.conexion.createStatement();
-                ResultSet rsLista = consulta.executeQuery(sql);
-                ArrayList<Facturas> listaOrdenes = new ArrayList<>();
-                while (rsLista.next()) {
-                    Facturas objP = new Facturas(
-                            rsLista.getInt("Facturaid"),
-                            rsLista.getInt("Cliente"),
-                            rsLista.getInt("Empleado"),
-                            rsLista.getString("Fecha"),
-                            rsLista.getDouble("Total"));
-                    listaOrdenes.add(objP);
-                }
-                return listaOrdenes;
-            } else {
-                throw new Exception("No se ha podido conectar con el servidor");
-            }
-        } catch (SQLException ex) {
-            throw new Exception("No se ha podido realizar la operación");
-        } finally {
-            CONEXION.desconectar();
-        }
-    }*/
-    
-    public ArrayList<Facturas> consultarTodos() throws Exception {
-        String sql = "SELECT f.*, c.*, e.* FROM Facturas f JOIN Clientes c ON f.Cliente = c.idCliente JOIN Empleados e ON f.Empleado = e.idEmpleado ORDER BY f.Facturaid ASC";
-        try {
-            if (CONEXION.conectar()) {
-                Statement consulta = CONEXION.conexion.createStatement();
-                ResultSet rsLista = consulta.executeQuery(sql);
-                ArrayList<Facturas> listaFacturas = new ArrayList<>();
-                while (rsLista.next()) {
-                    Cliente cliente = new Cliente(rsLista.getInt("c.idCliente"), rsLista.getString("c.NOMBRE"));
-                    Empleado empleado = new Empleado(rsLista.getInt("e.idEmpleado"), rsLista.getString("e.NOMBRE"));
-                    Facturas factura = new Facturas(
-                            rsLista.getInt("f.Facturaid"),
-                            cliente,
-                            empleado,
-                            rsLista.getString("f.Fecha"),
-                            rsLista.getDouble("f.Total"));
-                    listaFacturas.add(factura);
-                }
-                return listaFacturas;
-            } else {
-                throw new Exception("No se ha podido conectar con el servidor");
-            }
-        } catch (SQLException ex) {
-            //throw new Exception("No se ha podido realizar la operación");
-            throw ex;
-        } finally {
-            CONEXION.desconectar();
-        }
-    }
-
 
     public static double TOTAL(double a) throws Exception {
         String sql = "SELECT Subtotal"
@@ -161,7 +104,7 @@ public class DAOFACTURAS {
 //        }
 //        return -1;
 //    }
-    
+
     // REPORTE DETALLADO DE VENTAS
     
     public ArrayList<Facturas> consultarRangoFechas(Date fechaDesde, Date fechaHasta) throws Exception {
@@ -524,7 +467,6 @@ public class DAOFACTURAS {
             CONEXION.desconectar();
         }
     }
-    
 
 
 }

@@ -16,29 +16,6 @@ import java.util.ArrayList;
  * @author Brayan
  */
 public class DAOPLATILLOS {
-    /*public ArrayList<String> consultarTodos() throws Exception {
-        try {
-            if (CONEXION.conectar()) {
-                String sql = "SELECT Nombre"
-                        + " FROM Platillos";
-
-                Statement consulta = CONEXION.conexion.createStatement();
-                ResultSet rsLista = consulta.executeQuery(sql);
-                ArrayList<String> listaProductos = new ArrayList<>();
-                while (rsLista.next()) {
-                   String objP = rsLista.getString("Nombre");
-                    listaProductos.add(objP);
-                }
-                return listaProductos;
-            } else {
-                throw new Exception("No se ha podido conectar con el servidor");
-            }
-        } catch (SQLException ex) {
-            throw new Exception("No se ha podido realizar la operación");
-        } finally {
-             CONEXION.desconectar();
-        }
-    }*/
     
     public ArrayList<Platillos> consultarTodos() throws Exception
     {

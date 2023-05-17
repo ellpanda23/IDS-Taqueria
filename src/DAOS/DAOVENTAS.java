@@ -31,6 +31,15 @@ public class DAOVENTAS {
 
     }
 
+    public static int EliminarLista(List<Ventas> ventas, Ventas a) {
+        int cont = 0;
+        for (Ventas b : ventas) {
+            if (b.getProducto() == a.getProducto() && b.getCantidad() == a.getCantidad() && b.getPrecio() == a.getPrecio() && b.getSubtotal() == a.getSubtotal()) {
+                return cont;
+            }
+            cont++;
+        }
+        return 0;
     public int getOrdenS() {
         return OrdenS;
     }
@@ -54,6 +63,23 @@ public class DAOVENTAS {
         } catch (Exception e) {
         }
         return precio;
+    }
+
+    public static boolean Act(String N, double cantidad, int id) {
+        try {
+            if (CONEXION.conectar()) {
+                String sql = "UPDATE DETALLESORDEN SET CANTIDAD = ? WHERE orderid= ? and producto =" + "'" + N + "'";
+                PreparedStatement sentencia = CONEXION.conexion.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
+                sentencia.setDouble(1, cantidad);
+                sentencia.setInt(2, id);
+                sentencia.execute();
+                return true;
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, e);
+            return false;
+        }
+        return false;
     }
 
     public boolean agregarVarios(List<Ventas> ventas, Ordenes objOrden, int bandera) throws Exception {
@@ -126,8 +152,6 @@ public class DAOVENTAS {
         }
     }
 
-  
-
     public int agregar(Ventas Ventas) throws Exception {
         try {
             if (CONEXION.conectar()) {
@@ -166,6 +190,7 @@ public class DAOVENTAS {
         return id;
     }
 //CONSULTA TODOS LOS PRODUCTOS DE UNA ORDEN(REGRESA UNA LISTA)
+
     public ArrayList<String> ConsultarEditar(int N) {
         ArrayList<String> lista = new ArrayList();
         try {
@@ -279,5 +304,12 @@ public class DAOVENTAS {
         } catch (SQLException ex) {
             throw new Exception("No se ha podido realizar la operación " + ex);
         }
+    }
+    public int getOrdenS() {
+        return OrdenS;
+    }
+
+    public void setOrdenS(int OrdenS) {
+        this.OrdenS = OrdenS;
     }
 }

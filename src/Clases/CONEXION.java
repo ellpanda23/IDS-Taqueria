@@ -16,7 +16,7 @@ public class CONEXION {
 
     public static Connection conexion, conTrans;
 
-    private static  String a = "jdbc:mysql://localhost:3306/taqueria?user=root&password=";
+    private static  String a = "jdbc:mysql://localhost:3306/taqueria?user=root&password=root";
 
     public static boolean conectar() {
         try {
