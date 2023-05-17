@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package Conexion;
+package Clases;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -16,7 +16,7 @@ public class CONEXION {
 
     public static Connection conexion, conTrans;
 
-    private static  String a = "jdbc:mysql://localhost:3306/taqueria?user=root&password=root";
+    private static  String a = "jdbc:mysql://localhost:3306/taqueria?user=root&password=";
 
     public static boolean conectar() {
         try {
