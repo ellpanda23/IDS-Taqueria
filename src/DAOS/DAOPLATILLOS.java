@@ -16,18 +16,24 @@ import java.util.ArrayList;
  * @author Brayan
  */
 public class DAOPLATILLOS {
-    public ArrayList<String> consultarTodos() throws Exception {
+    
+    public ArrayList<Platillos> consultarTodos() throws Exception
+    {
         try {
             if (CONEXION.conectar()) {
-                String sql = "SELECT Nombre"
+                String sql = "SELECT * "
                         + " FROM Platillos";
 
                 Statement consulta = CONEXION.conexion.createStatement();
                 ResultSet rsLista = consulta.executeQuery(sql);
-                ArrayList<String> listaProductos = new ArrayList<>();
+                ArrayList<Platillos> listaProductos = new ArrayList<>();
                 while (rsLista.next()) {
-                   String objP = rsLista.getString("Nombre");
-                    listaProductos.add(objP);
+                   Platillos platillo = new Platillos(
+                           rsLista.getInt("productoid"),
+                           rsLista.getString("Nombre"),
+                           rsLista.getDouble("precio")
+                   );
+                    listaProductos.add(platillo);
                 }
                 return listaProductos;
             } else {

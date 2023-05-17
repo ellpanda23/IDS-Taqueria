@@ -4,12 +4,12 @@
  */
 package DAOS;
 
+import Clases.CONEXION;
 import Clases.Ordenes;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import Conexion.*;
 import java.sql.PreparedStatement;
 import javax.swing.JOptionPane;
 
@@ -25,7 +25,6 @@ public class DAOORDENES {
         String sql = "SELECT * FROM Ordenes order by Orderid asc";
         try {
             if (CONEXION.conectar()) {
-
                 Statement consulta = CONEXION.conexion.createStatement();
                 ResultSet rsLista = consulta.executeQuery(sql);
                 ArrayList<Ordenes> listaOrdenes = new ArrayList<>();

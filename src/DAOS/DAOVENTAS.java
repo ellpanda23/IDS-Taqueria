@@ -1,4 +1,4 @@
-/*
+ /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
@@ -40,6 +40,12 @@ public class DAOVENTAS {
             cont++;
         }
         return 0;
+    public int getOrdenS() {
+        return OrdenS;
+    }
+
+    public void setOrdenS(int OrdenS) {
+        this.OrdenS = OrdenS;
     }
 
     public double PyS(String N) {
@@ -202,12 +208,11 @@ public class DAOVENTAS {
         return lista;
     }
 //BORRAR PLATILLO
-
     public boolean BorrarProducto(String a, int b) {
         try {
             if (CONEXION.conectar()) {
                 String sql = "DELETE FROM DETALLESORDEN WHERE Orderid =" + b + " AND PRODUCTO = " + "'" + a + "'";
-               Statement consulta = CONEXION.conexion.createStatement();
+                Statement consulta = CONEXION.conexion.createStatement();
                 consulta.executeUpdate(sql);
                 return true;
             }
@@ -218,7 +223,6 @@ public class DAOVENTAS {
         return false;
     }
 //CONSULTA TODOS LOS DETALLES DE LAS ORDENES
-
     public ArrayList<Ventas> consultarTodos(int a) throws Exception {
         String sql = "SELECT Producto,Cantidad,Precio,Subtotal"
                 + "   FROM DETALLESORDEN where orderid =" + a;
@@ -247,7 +251,6 @@ public class DAOVENTAS {
 //        }
     }
 //REGRESA EL TOTAL DE UNA ORDEN
-
     public double TOTAL(double a) throws Exception {
         String sql = "SELECT Subtotal"
                 + "   FROM DETALLESORDEN where orderid =" + a;
@@ -271,7 +274,6 @@ public class DAOVENTAS {
 //        }
     }
 //CREAR EL TICKET
-
     public String consultarTodos1(int a) throws Exception {
         String sql = "SELECT Producto,Cantidad,Precio,Subtotal"
                 + "   FROM DETALLESORDEN where orderid =" + a;
@@ -303,7 +305,6 @@ public class DAOVENTAS {
             throw new Exception("No se ha podido realizar la operación " + ex);
         }
     }
-
     public int getOrdenS() {
         return OrdenS;
     }
