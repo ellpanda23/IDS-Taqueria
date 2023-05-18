@@ -7,21 +7,11 @@ package Interfaces;
 import Clases.Facturas;
 import DAOS.DAOFACTURAS;
 import DAOS.DAOVENTAS;
-import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.kernel.pdf.PdfWriter;
-import com.itextpdf.layout.Document;
-import com.itextpdf.layout.element.Table;
-import com.itextpdf.layout.properties.HorizontalAlignment;
 import java.awt.event.FocusEvent;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 
 
@@ -38,17 +28,7 @@ public class ReporteDetallado extends javax.swing.JFrame {
      */
     public ReporteDetallado() {
         initComponents();
-        
-        try {
-            // Crear el objeto de DAOFacturas
-            DAOFACTURAS daoFacturas = new DAOFACTURAS();
-            // Obtener los datos de la base de datos
-            ArrayList<Facturas> listaFacturas = daoFacturas.consultarTodos();
-            cargarTabla(listaFacturas);
-        } catch (Exception ex) {
-            // Manejar la excepción adecuadamente
-            ex.printStackTrace();
-        }
+        cargarTabla();
 
     }
 
@@ -190,11 +170,6 @@ public class ReporteDetallado extends javax.swing.JFrame {
         btnRegresar.setBackground(new java.awt.Color(51, 102, 255));
         btnRegresar.setForeground(new java.awt.Color(255, 255, 255));
         btnRegresar.setText("Regresar");
-        btnRegresar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnRegresarActionPerformed(evt);
-            }
-        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -252,87 +227,41 @@ public class ReporteDetallado extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void cargarTabla(ArrayList<Facturas> listaFacturas)
+    private void cargarTabla()
     {
-              
-        // Crear un nuevo modelo de tabla con los datos de la consulta
-        String[] columnas = {"Factura", "Fecha", "Empleado", "Cliente", "Precio", "Detalles"};
-        DefaultTableModel modelo = new DefaultTableModel(columnas, 0);
-        for (Facturas factura : listaFacturas) {
-            Object[] fila = {
-                factura.getFacid(),
-                factura.getFecha(),
-                factura.getEmpleado().getNombre(),
-                factura.getCliente().getNombre(),
-                factura.getTotal(),
-                "Detalles"
-            };
-            modelo.addRow(fila);
+        try {
+            // Crear el objeto de DAOFacturas
+            DAOFACTURAS daoFacturas = new DAOFACTURAS();
+            // Obtener los datos de la base de datos
+            ArrayList<Facturas> listaFacturas = daoFacturas.consultarTodos();
+
+            // Crear un nuevo modelo de tabla con los datos de la consulta
+            String[] columnas = {"Factura", "Fecha", "Empleado", "Cliente", "Precio", "Detalles"};
+            DefaultTableModel modelo = new DefaultTableModel(columnas, 0);
+            for (Facturas factura : listaFacturas) {
+                Object[] fila = {
+                    factura.getFacid(),
+                    factura.getFecha(),
+                    factura.getEmpleado().getNombre(),
+                    factura.getCliente().getNombre(),
+                    factura.getTotal(),
+                    "Detalles"
+                };
+                modelo.addRow(fila);
+            }
+
+            // Establecer el nuevo modelo de tabla en la tabla
+            tblReporte.setModel(modelo);
+
+        } catch (Exception ex) {
+            // Manejar la excepción adecuadamente
+            ex.printStackTrace();
         }
-
-        // Establecer el nuevo modelo de tabla en la tabla
-        tblReporte.setModel(modelo);
-
-        
     }
 
     
     private void btnGenerarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGenerarActionPerformed
         
-        
-        JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setDialogTitle("Guardar reporte en formato PDF");
-        fileChooser.setFileFilter(new FileNameExtensionFilter("Archivos PDF (*.pdf)", "pdf"));
-        
-        // Establecer el nombre de archivo por defecto como la fecha actual
-        Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd_HHmmss");
-        String defaultFileName = dateFormat.format(calendar.getTime()) + ".pdf";
-        fileChooser.setSelectedFile(new File(defaultFileName));
-        
-        int result = fileChooser.showSaveDialog(null);
-        
-        if(result == JFileChooser.APPROVE_OPTION)
-        {
-            try {
-                String filePath = fileChooser.getSelectedFile().getAbsolutePath();
-                
-                // Verificar y agregar la extensión ".pdf" si no está presente
-                if (!filePath.toLowerCase().endsWith(".pdf")) {
-                    filePath += ".pdf";
-                }
-                
-                PdfWriter pdfWriter = new PdfWriter(filePath);
-
-                PdfDocument pdfDocument = new PdfDocument(pdfWriter);
-
-                Document document = new Document(pdfDocument);
-
-                document.setMargins(20, 20, 20, 20);
-
-                Table pdfTable = new Table(tblReporte.getColumnCount());
-                pdfTable.setHorizontalAlignment(HorizontalAlignment.LEFT);
-
-                // Agregar encabezados de columna
-                for (int i = 0; i < tblReporte.getColumnCount(); i++) {
-                    pdfTable.addCell(tblReporte.getColumnName(i));
-                }
-
-                // Agregar datos de la tabla
-                for (int i = 0; i < tblReporte.getRowCount(); i++) {
-                    for (int j = 0; j < tblReporte.getColumnCount(); j++) {
-                        pdfTable.addCell(tblReporte.getValueAt(i, j).toString());
-                    }
-                }
-
-                document.add(pdfTable);
-                document.close();
-
-                System.out.println("Reporte generado exitosamente.");
-            } catch (FileNotFoundException ex) {
-                System.out.println(ex.getMessage());
-            }
-        }
     }//GEN-LAST:event_btnGenerarActionPerformed
 
     private void txtDesdeFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtDesdeFocusGained
@@ -411,16 +340,7 @@ public class ReporteDetallado extends javax.swing.JFrame {
         if(txtDesde.getText().equals("dd/mm/aaaa") && txtHasta.getText().equals("dd/mm/aaaa") && txtBuscar.getText().equals("Buscar venta") ) {
             // CUANDO ESTAN VACIOS TODOS LOS TEXTBOX SE CARGAN TODAS LAS FACTURAS
             //JOptionPane.showMessageDialog(null, "Se debe ingresar un rango de fechas o buscar una venta por numero de factura, empleado, fecha o cliente", "Error", JOptionPane.ERROR_MESSAGE);
-            try {
-                // Crear el objeto de DAOFacturas
-                DAOFACTURAS daoFacturas = new DAOFACTURAS();
-                // Obtener los datos de la base de datos
-                ArrayList<Facturas> listaFacturas = daoFacturas.consultarTodos();
-                cargarTabla(listaFacturas);
-            } catch (Exception ex) {
-                // Manejar la excepción adecuadamente
-                ex.printStackTrace();
-            }
+            cargarTabla();
         } 
         else if(txtDesde.getText().equals("dd/mm/aaaa") && txtHasta.getText().equals("dd/mm/aaaa") && !txtBuscar.getText().equals("Buscar venta")) {
             // ESTO LO HACE CUANDO SOLO TIENE TEXTO EL TEXTBOX DE BUSCAR
@@ -430,55 +350,23 @@ public class ReporteDetallado extends javax.swing.JFrame {
                 // Obtener los datos de la base de datos
                 ArrayList<Facturas> listaFacturas = daoFacturas.buscarFacturas(txtBuscar.getText());
 
-                cargarTabla(listaFacturas);
+                // Crear un nuevo modelo de tabla con los datos de la consulta
+                String[] columnas = {"Factura", "Fecha", "Empleado", "Cliente", "Precio", "Detalles"};
+                DefaultTableModel modelo = new DefaultTableModel(columnas, 0);
+                for (Facturas factura : listaFacturas) {
+                    Object[] fila = {
+                        factura.getFacid(),
+                        factura.getFecha(),
+                        factura.getEmpleado().getNombre(),
+                        factura.getCliente().getNombre(),
+                        factura.getTotal(),
+                        "Detalles"
+                    };
+                    modelo.addRow(fila);
+                }
 
-            } catch (Exception ex) {
-                // Manejar la excepción adecuadamente
-                ex.printStackTrace();
-            }
-
-        }
-        else if(!txtDesde.getText().equals("dd/mm/aaaa") && txtHasta.getText().equals("dd/mm/aaaa") && txtBuscar.getText().equals("Buscar venta"))
-        {
-            try {
-                
-                // Convertir el texto en tipo date
-
-                SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
-                java.util.Date desdeJ = formato.parse(txtDesde.getText());
-                
-                Date desde = new Date(desdeJ.getTime());
-                
-                // Crear el objeto de DAOFacturas
-                DAOFACTURAS daoFacturas = new DAOFACTURAS();
-                // Obtener los datos de la base de datos
-                ArrayList<Facturas> listaFacturas = daoFacturas.consultarDesde(desde);
-
-                cargarTabla(listaFacturas);
-
-            } catch (Exception ex) {
-                // Manejar la excepción adecuadamente
-                ex.printStackTrace();
-            }
-
-        }
-        else if(txtDesde.getText().equals("dd/mm/aaaa") && !txtHasta.getText().equals("dd/mm/aaaa") && txtBuscar.getText().equals("Buscar venta"))
-        {
-            try {
-                
-                // Convertir el texto en tipo date
-
-                SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
-                java.util.Date hastaJ = formato.parse(txtHasta.getText());
-                
-                Date hasta = new Date(hastaJ.getTime());
-                
-                // Crear el objeto de DAOFacturas
-                DAOFACTURAS daoFacturas = new DAOFACTURAS();
-                // Obtener los datos de la base de datos
-                ArrayList<Facturas> listaFacturas = daoFacturas.consultarHasta(hasta);
-
-                cargarTabla(listaFacturas);
+                // Establecer el nuevo modelo de tabla en la tabla
+                tblReporte.setModel(modelo);
 
             } catch (Exception ex) {
                 // Manejar la excepción adecuadamente
@@ -496,92 +384,30 @@ public class ReporteDetallado extends javax.swing.JFrame {
                 // Convertir el texto en tipo date
 
                 SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
-                java.util.Date desdeJ = formato.parse(txtDesde.getText());
-                java.util.Date hastaJ = formato.parse(txtHasta.getText());
-                
-                Date desde = new Date(desdeJ.getTime());
-                Date hasta = new Date(hastaJ.getTime());
-                
+                java.util.Date desde = formato.parse(txtDesde.getText());
+                java.util.Date hasta = formato.parse(txtHasta.getText());
+
                 
                 // Obtener los datos de la base de datos
-                ArrayList<Facturas> listaFacturas = daoFacturas.consultarRangoFechas(desde, hasta);
-                
-                cargarTabla(listaFacturas);
+                ArrayList<Facturas> listaFacturas = daoFacturas.consultarDesdeHasta(desde, hasta);
 
-            } catch (Exception ex) {
-                // Manejar la excepción adecuadamente
-                ex.printStackTrace();
-            }
-        }
-        else if(!txtDesde.getText().equals("dd/mm/aaaa") && !txtHasta.getText().equals("dd/mm/aaaa") && !txtBuscar.getText().equals("Buscar venta")) 
-        {
-            try {
-                // Crear el objeto de DAOFacturas
-                DAOFACTURAS daoFacturas = new DAOFACTURAS();
-                
-                // Convertir el texto en tipo date
+                // Crear un nuevo modelo de tabla con los datos de la consulta
+                String[] columnas = {"Factura", "Fecha", "Empleado", "Cliente", "Precio", "Detalles"};
+                DefaultTableModel modelo = new DefaultTableModel(columnas, 0);
+                for (Facturas factura : listaFacturas) {
+                    Object[] fila = {
+                        factura.getFacid(),
+                        factura.getFecha(),
+                        factura.getEmpleado().getNombre(),
+                        factura.getCliente().getNombre(),
+                        factura.getTotal(),
+                        "Detalles"
+                    };
+                    modelo.addRow(fila);
+                }
 
-                SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
-                java.util.Date desdeJ = formato.parse(txtDesde.getText());
-                java.util.Date hastaJ = formato.parse(txtHasta.getText());
-                
-                Date desde = new Date(desdeJ.getTime());
-                Date hasta = new Date(hastaJ.getTime());
-                
-                
-                // Obtener los datos de la base de datos
-                ArrayList<Facturas> listaFacturas = daoFacturas.consultarRangoCriterio(txtBuscar.getText(), desde, hasta);
-                
-                cargarTabla(listaFacturas);
-
-            } catch (Exception ex) {
-                // Manejar la excepción adecuadamente
-                ex.printStackTrace();
-            }
-        }
-        
-        else if(!txtDesde.getText().equals("dd/mm/aaaa") && txtHasta.getText().equals("dd/mm/aaaa") && !txtBuscar.getText().equals("Buscar venta")) 
-        {
-            try {
-                // Crear el objeto de DAOFacturas
-                DAOFACTURAS daoFacturas = new DAOFACTURAS();
-                
-                // Convertir el texto en tipo date
-
-                SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
-                java.util.Date desdeJ = formato.parse(txtDesde.getText());
-                
-                Date desde = new Date(desdeJ.getTime());
-                
-                
-                // Obtener los datos de la base de datos
-                ArrayList<Facturas> listaFacturas = daoFacturas.consultarDesdeCriterio(txtBuscar.getText(), desde);
-                
-                cargarTabla(listaFacturas);
-
-            } catch (Exception ex) {
-                // Manejar la excepción adecuadamente
-                ex.printStackTrace();
-            }
-        }
-        else if(txtDesde.getText().equals("dd/mm/aaaa") && !txtHasta.getText().equals("dd/mm/aaaa") && !txtBuscar.getText().equals("Buscar venta")) 
-        {
-            try {
-                // Crear el objeto de DAOFacturas
-                DAOFACTURAS daoFacturas = new DAOFACTURAS();
-                
-                // Convertir el texto en tipo date
-
-                SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
-                java.util.Date hastaJ = formato.parse(txtHasta.getText());
-                
-                Date hasta = new Date(hastaJ.getTime());
-                
-                
-                // Obtener los datos de la base de datos
-                ArrayList<Facturas> listaFacturas = daoFacturas.consultarDesdeCriterio(txtBuscar.getText(), hasta);
-                
-                cargarTabla(listaFacturas);
+                // Establecer el nuevo modelo de tabla en la tabla
+                tblReporte.setModel(modelo);
 
             } catch (Exception ex) {
                 // Manejar la excepción adecuadamente
@@ -603,12 +429,6 @@ public class ReporteDetallado extends javax.swing.JFrame {
         if(txtBuscar.getText().matches(""))
             txtBuscar.setText("Buscar venta");
     }//GEN-LAST:event_txtBuscarFocusLost
-
-    private void btnRegresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegresarActionPerformed
-        AdminMenu newframe = new AdminMenu();
-        newframe.setVisible(true);
-        this.dispose();
-    }//GEN-LAST:event_btnRegresarActionPerformed
 
     /**
      * @param args the command line arguments

@@ -6,14 +6,16 @@ package Interfaces;
 
 import Clases.Facturas;
 import Clases.Ordenes;
-import Clases.Platillos;
 import Clases.Ventas;
 import DAOS.DAOFACTURAS;
 import DAOS.DAOORDENES;
 import DAOS.DAOPLATILLOS;
+import DAOS.DAOPRODUCTOS;
 import DAOS.DAOVENTAS;
+import java.awt.HeadlessException;
 import java.sql.SQLException;
 import java.time.LocalDate;
+
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -27,10 +29,10 @@ import javax.swing.table.TableColumn;
  * @author Brayan
  */
 public class AGREGARORDEN extends javax.swing.JFrame {
-    
+
     static int bandera = 0;
     static int a = 0;
-    
+
     public AGREGARORDEN(int bandera) throws SQLException {
         initComponents();
         Sp.setValue(1);
@@ -38,8 +40,8 @@ public class AGREGARORDEN extends javax.swing.JFrame {
         DefaultTableModel modelo = (DefaultTableModel) tblVentas.getModel();
         modelo.setRowCount(0);
         if (bandera == 0) {
-            AGREGARORDEN.a = DAOORDENES.UltimaO() + 1;
-            jLabel1.setText("ORDEN: " + (a));
+            AGREGARORDEN.a = DAOORDENES.UltimaO();
+            jLabel1.setText("ORDEN: " + (a + 1));
         } else {
             jLabel1.setText("ORDEN: " + bandera);
         }
@@ -53,13 +55,13 @@ public class AGREGARORDEN extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, e);
         }
         actualizarTablaD();
-        
+
         this.setLocationRelativeTo(null);
         this.setTitle("Ventas");
         //lblCliente.setText(cliente.getName());
     }
     DefaultTableModel model = new DefaultTableModel();
-    
+
     public void actualizarTablaD() {
         if (bandera == 0) {
         } else {
@@ -77,10 +79,10 @@ public class AGREGARORDEN extends javax.swing.JFrame {
                     modelo.addRow(fila);
                 }
                 productos = new DAOVENTAS().ConsultarEditar(bandera);
-                
+
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(this, ex.getMessage());
-                
+
             }
         }
     }
@@ -118,7 +120,7 @@ public class AGREGARORDEN extends javax.swing.JFrame {
         jMenuItem1.setText("jMenuItem1");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setAutoRequestFocus(false);
+        setType(java.awt.Window.Type.UTILITY);
 
         tblVentas.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -130,27 +132,14 @@ public class AGREGARORDEN extends javax.swing.JFrame {
             new String [] {
                 "Producto", "Precio", "Cantidad", "Subtotal"
             }
-        ) {
-            boolean[] canEdit = new boolean [] {
-                false, true, true, false
-            };
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
+        ));
         jScrollPane1.setViewportView(tblVentas);
-        if (tblVentas.getColumnModel().getColumnCount() > 0) {
-            tblVentas.getColumnModel().getColumn(0).setResizable(false);
-            tblVentas.getColumnModel().getColumn(1).setResizable(false);
-            tblVentas.getColumnModel().getColumn(2).setResizable(false);
-        }
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel1.setText("VENTA: ");
 
         jLabel2.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
-        jLabel2.setText("PRODUCTO");
+        jLabel2.setText("PLATILLOS");
 
         jLabel3.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         jLabel3.setText("CANTIDAD");
@@ -213,7 +202,6 @@ public class AGREGARORDEN extends javax.swing.JFrame {
         jLabel5.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         jLabel5.setText("LUGAR");
 
-        CbL.setEditable(true);
         CbL.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "DOMICILIO", "RESTAURANT" }));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -286,22 +274,22 @@ public class AGREGARORDEN extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
      ArrayList<Ventas> listaVentas = new ArrayList<>();
     int contador = 0;
-    
+
     int indexTabla = 0;
-    
+
     ArrayList<String> productos = new ArrayList<>();
-    
+
     boolean flag = true;
 
     private void btnAdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAdActionPerformed
-        if (bandera == 0) {
-        } else {
+        if (bandera == 0) {//VALIDA LA BANDERA SI ES 0 ES UNA ORDEN NUEVA
+        } else {//SI NO, RECUPERA LOS PLATILLOS QUE HAY EN ESA ORDEN
             this.productos = new DAOVENTAS().ConsultarEditar(bandera);
         }
-        if ((int) Sp.getValue() <= 0) {
+        if ((int) Sp.getValue() <= 0) {//VALIDAR QUE LA CANTIDAD SEA MAYOR A 0
             JOptionPane.showMessageDialog(this, "La cantidad debe de ser mayor a 0");
         } else {
-            if (productos.isEmpty()) {
+            if (productos.isEmpty()) {//PREGUNTAMOS SI YA HAY PLATILLOS EN LA LISTA
                 productos.add(CbProducto.getSelectedItem().toString());
                 try {
                     DefaultTableModel modelo = (DefaultTableModel) tblVentas.getModel();
@@ -310,19 +298,19 @@ public class AGREGARORDEN extends javax.swing.JFrame {
                     double subtotal = cantidad * Precio;
                     Object[] fila = new Object[]{
                         CbProducto.getSelectedItem(), Precio, Sp.getValue(), subtotal};
-                    
+
                     String a = (String) CbProducto.getSelectedItem();
                     int b = (int) Sp.getValue();
                     double c = Precio, d = subtotal;
                     Ventas n = new Ventas(a, (int) c, b, d);
-                    
+
                     listaVentas.add(n);
                     contador++;
                     modelo.addRow(fila);
                 } catch (Exception ex) {
                     JOptionPane.showMessageDialog(this, ex.getMessage());
                 }
-            } else {
+            } else {//SI NO, BUSCAMOS CUAL PLATILLO ES Y ACTIVAMOS UNA BANDERA SI ESTA
                 for (int i = 0; i < productos.size(); i++) {
                     if (!CbProducto.getSelectedItem().toString().equals(productos.get(i))) {
                         flag = true;
@@ -331,7 +319,7 @@ public class AGREGARORDEN extends javax.swing.JFrame {
                         break;
                     }
                 }
-                if (flag) {
+                if (flag) {//SI NO SE ENCUENTRA SE AGREGA EL PLATILLO
                     productos.add(CbProducto.getSelectedItem().toString());
                     try {
                         DefaultTableModel modelo = (DefaultTableModel) tblVentas.getModel();
@@ -350,7 +338,7 @@ public class AGREGARORDEN extends javax.swing.JFrame {
                     } catch (Exception ex) {
                         JOptionPane.showMessageDialog(this, ex.getMessage());
                     }
-                } else {
+                } else {//SI YA SE ENCUENTRA
                     try {
                         DefaultTableModel modelo = (DefaultTableModel) tblVentas.getModel();
                         double a = 0;
@@ -359,16 +347,19 @@ public class AGREGARORDEN extends javax.swing.JFrame {
                             String a1 = modelo.getValueAt(i, 0).toString();
                             String a2 = CbProducto.getSelectedItem().toString();
                             if (a1.equals(a2)) {
-                                a = Integer.parseInt(modelo.getValueAt(i, 2).toString());
-                                a += Integer.parseInt(Sp.getValue().toString());
+                                a = (double) Double.parseDouble(modelo.getValueAt(i, 2).toString());
+                                a += (double) Double.parseDouble(Sp.getValue().toString());
                                 Object b = a;
                                 aG.setProducto((String) modelo.getValueAt(i, 0));
                                 aG.setPrecio((Double) modelo.getValueAt(i, 1));
-                                aG.setCantidad((int) modelo.getValueAt(i, 2));
-                                aG.setSubtotal((Double) modelo.getValueAt(i, 3));
-                                int Bo = DAOVENTAS.EliminarLista(listaVentas, aG);
-                                listaVentas.remove(Bo);
-                                modelo.setValueAt(b, i, 2);
+                                aG.setCantidad((int) Double.parseDouble(modelo.getValueAt(i, 2).toString()));
+                                aG.setSubtotal((Double) modelo.getValueAt(i, 3) * aG.getCantidad());
+                                if (bandera == 0) {
+                                    int Bo = DAOVENTAS.EliminarLista(listaVentas, aG);
+                                    listaVentas.remove(Bo);
+                                    modelo.setValueAt(b, i, 2);
+                                }
+
                             }
                         }
                         if (bandera == 0) {
@@ -382,17 +373,17 @@ public class AGREGARORDEN extends javax.swing.JFrame {
                         } else {
                             if (DAOVENTAS.Act(CbProducto.getSelectedItem().toString(), a, bandera)) {
                                 JOptionPane.showMessageDialog(null, "SE ACTUALIZO CON EXITO");
+                                actualizarTablaD();
                             } else {
                                 JOptionPane.showMessageDialog(null, "FALLO AL ACTUALIZAR");
                             }
                         }
-                        
-                    } catch (Exception e) {
+
+                    } catch (HeadlessException | NumberFormatException e) {
                         JOptionPane.showMessageDialog(this, e);
                     }
-                    
                 }
-                
+
             }
         }
         Sp.setValue(1);
@@ -401,7 +392,7 @@ public class AGREGARORDEN extends javax.swing.JFrame {
     private void BtnFinalizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnFinalizarActionPerformed
         int fila = 0;
         if (listaVentas.isEmpty() && bandera == 0) {
-            JOptionPane.showMessageDialog(this, "DEBE AGREGAR ALMENOS UN PRODUCTO");
+            JOptionPane.showMessageDialog(this, "DEBE AGREGAR ALMENOS UN PLATILLO");
         } else {
             if (bandera != 0) {
                 fila = JOptionPane.showConfirmDialog(this, "¿EL LUGAR DEL PEDIDO ES EL CORRECTO?");
@@ -412,15 +403,15 @@ public class AGREGARORDEN extends javax.swing.JFrame {
                     String a = (String) modeloCat.getSelectedItem();
                     //FALTA MODIFICAR EL ID DEL EMPLEADO Y CLIENTE
                     Ordenes obj = new Ordenes(1, 2, String.valueOf(LocalDate.now()), a);
-                    
+
                     if (new DAOVENTAS().agregarVarios(listaVentas, obj, bandera)) {
-                        Facturas obj1 = new Facturas(DAOORDENES.UltimaO(), 1, 1, String.valueOf(LocalDate.now()), DAOFACTURAS.TOTAL(AGREGARORDEN.a));
+                        Facturas obj1 = new Facturas(DAOORDENES.UltimaO(), 1, 1, String.valueOf(LocalDate.now()), new DAOVENTAS().TOTAL(AGREGARORDEN.a));
                         if (new DAOFACTURAS().fac(obj1)) {
                             JOptionPane.showMessageDialog(this, "La transacción se realizo con exito");
                         }
                     }
                 } catch (Exception ex) {
-                    
+
                     JOptionPane.showMessageDialog(this, ex);
                 }
                 new ORDENES().setVisible(true);
@@ -433,18 +424,17 @@ public class AGREGARORDEN extends javax.swing.JFrame {
         new ORDENES().setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_btnOActionPerformed
-    
+
 
     private void btnEActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEActionPerformed
         String a = "";
-        double c = 0;
         if (tblVentas.getSelectedRow() >= 0 && tblVentas.getSelectedRowCount() < 2) {
             DefaultTableModel mdl = (DefaultTableModel) tblVentas.getModel();
-            int fila = JOptionPane.showConfirmDialog(this, "¿Deseas borrar este producto?", "Sistema", JOptionPane.INFORMATION_MESSAGE);
+            int fila = JOptionPane.showConfirmDialog(this, "¿Deseas borrar este platillo?", "Sistema", JOptionPane.INFORMATION_MESSAGE);
             if (fila == JOptionPane.YES_OPTION) {
                 a = (String) mdl.getValueAt(tblVentas.getSelectedRow(), 0);
                 double b = (double) mdl.getValueAt(tblVentas.getSelectedRow(), 1);
-                c = (double) mdl.getValueAt(tblVentas.getSelectedRow(), 2);
+                double c = (double) mdl.getValueAt(tblVentas.getSelectedRow(), 2);
                 double d = (double) mdl.getValueAt(tblVentas.getSelectedRow(), 3);
                 Ventas j = new Ventas(0, a, b, c, d);
                 mdl.removeRow(tblVentas.getSelectedRow());
@@ -460,9 +450,9 @@ public class AGREGARORDEN extends javax.swing.JFrame {
                         }
                     }
                     if (f) {
-                        JOptionPane.showMessageDialog(this, "EL PRODUCTO SE ELIMINO CORRECTAMENTE");
+                        JOptionPane.showMessageDialog(this, "EL PLATILLO SE ELIMINO CORRECTAMENTE");
                     } else {
-                        JOptionPane.showMessageDialog(this, "EL PRODUCTO NO SE ELIMINO CORRECTAMENTE");
+                        JOptionPane.showMessageDialog(this, "EL PLATILLO NO SE ELIMINO CORRECTAMENTE");
                     }
                 }
             }
@@ -471,18 +461,18 @@ public class AGREGARORDEN extends javax.swing.JFrame {
                     boolean B = new DAOVENTAS().BorrarProducto(a, bandera);
                     if (B) {
                         actualizarTablaD();
-                        JOptionPane.showMessageDialog(this, "EL PRODUCTO SE ELIMINO CORRECTAMENTE");
+                        JOptionPane.showMessageDialog(this, "EL PLATILLO SE ELIMINO CORRECTAMENTE");
                     } else {
-                        JOptionPane.showMessageDialog(this, "EL PRODUCTO NO SE ELIMINO CORRECTAMENTE");
+                        JOptionPane.showMessageDialog(this, "EL PLATILLO NO SE ELIMINO CORRECTAMENTE");
                     }
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(this, e);
                 }
             }
-        } else if (tblVentas.getSelectedRow() > 1) {
-            JOptionPane.showMessageDialog(this, "SELECCIONE UN PRODUCTO", "Error", JOptionPane.WARNING_MESSAGE);
+        } else if (tblVentas.getSelectedRow() >= 2) {
+            JOptionPane.showMessageDialog(this, "SELECCIONE UN PLATILLO", "Error", JOptionPane.WARNING_MESSAGE);
         } else {
-            JOptionPane.showMessageDialog(this, "SOLO PUEDE ELIMINARSE UN PRODUCTO A LA VEZ", "Error", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "SOLO PUEDE ELIMINARSE UN PLATILLO A LA VEZ", "Error", JOptionPane.WARNING_MESSAGE);
         }
 
     }//GEN-LAST:event_btnEActionPerformed
@@ -494,7 +484,7 @@ public class AGREGARORDEN extends javax.swing.JFrame {
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
-            
+
             public void run() {
                 try {
                     new AGREGARORDEN(bandera).setVisible(true);

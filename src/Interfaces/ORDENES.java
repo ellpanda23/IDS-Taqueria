@@ -6,10 +6,9 @@ package Interfaces;
 
 import Clases.Ordenes;
 import Clases.Ventas;
-import DAOS.DAOFACTURAS;
 import DAOS.DAOORDENES;
 import DAOS.DAOVENTAS;
-//import java.awt.HeadlessException;
+import java.awt.HeadlessException;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -32,12 +31,12 @@ public class ORDENES extends javax.swing.JFrame {
     public ORDENES() {
         initComponents();
         actualizarTabla();
-        
+
         MouseListener mouseListener = new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 comprobarSeleccion();
             }
-            
+
             public void mouseReleased(MouseEvent e) {
                 comprobarSeleccion();
             }
@@ -45,9 +44,9 @@ public class ORDENES extends javax.swing.JFrame {
         TBLO.addMouseListener(mouseListener);
         pnl1.setVisible(false);
         tbl1.setVisible(false);
-        
+
     }
-    
+
     private void comprobarSeleccion() {
         if (TBLO.getSelectedRow() == -1) {
             tbl1.setVisible(false);
@@ -82,6 +81,8 @@ public class ORDENES extends javax.swing.JFrame {
         tbl1 = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setResizable(false);
+        setType(java.awt.Window.Type.UTILITY);
 
         TBLO.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -243,7 +244,7 @@ public class ORDENES extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
  public void actualizarTabla() {
         try {
-            
+
             DefaultTableModel modelo = (DefaultTableModel) TBLO.getModel();
             ArrayList<Ordenes> listaProductos = new DAOORDENES().consultarTodos();
             modelo.setRowCount(0);
@@ -255,15 +256,15 @@ public class ORDENES extends javax.swing.JFrame {
                     p.getFecha(),
                     p.getLugar()
                 };
-                
-                    modelo.addRow(fila);
+
+                modelo.addRow(fila);
             }
-            
+
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, ex.getMessage());
         }
     }
-    
+
     public void actualizarTablaD() {
         try {
             DefaultTableModel modelo = (DefaultTableModel) tbl1.getModel();
@@ -281,7 +282,7 @@ public class ORDENES extends javax.swing.JFrame {
             }
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, ex.getMessage());
-            
+
         }
     }
 
@@ -295,13 +296,24 @@ public class ORDENES extends javax.swing.JFrame {
     }//GEN-LAST:event_btnAgregarOActionPerformed
 
     private void btnTicketActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTicketActionPerformed
+            DefaultTableModel modelo0 = (DefaultTableModel) TBLO.getModel();
         try {
-            new FACTURAS().setVisible(true);
-            this.setVisible(false);
-        } catch (Exception e) {
+            if (TBLO.getSelectedRow() >= 0 && TBLO.getSelectedRowCount() < 2) {
+                int a = (int) modelo0.getValueAt(TBLO.getSelectedRow(), 0);
+                new TICKET(a).setVisible(true);
+                this.setVisible(false);
+            } else if (TBLO.getSelectedRowCount() == 0) {
+                JOptionPane.showMessageDialog(this, "DEBE SELECCIONAR LA ORDEN PARA GENERAR EL TICKET",
+                        "¡ERROR!", JOptionPane.WARNING_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, "SOLO PUEDE SELECCIONAR UNA ORDEN PARA GENERAR EL TICKET",
+                        "¡ERROR!", JOptionPane.WARNING_MESSAGE);
+            }
+        } catch (HeadlessException e) {
             JOptionPane.showMessageDialog(this, e);
+        } catch (Exception ex) {
+            Logger.getLogger(ORDENES.class.getName()).log(Level.SEVERE, null, ex);
         }
-        this.setVisible(false);
     }//GEN-LAST:event_btnTicketActionPerformed
 
     private void btnDescartarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDescartarActionPerformed

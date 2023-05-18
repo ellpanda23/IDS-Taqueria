@@ -26,7 +26,7 @@ public class TICKET extends javax.swing.JFrame {
         actualizarTablaD(a);
         TICKET.a = a;
         lblNo.setText("No.Orden = " + a);
-        //lblTotal.setText("TOTAL = " + new DAOVENTAS().TOTAL(a));
+        lblTotal.setText("TOTAL = " + new DAOVENTAS().TOTAL(a));
     }
 
     /**
@@ -48,6 +48,8 @@ public class TICKET extends javax.swing.JFrame {
         btnImprimir = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setResizable(false);
+        setType(java.awt.Window.Type.UTILITY);
 
         tblt.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {

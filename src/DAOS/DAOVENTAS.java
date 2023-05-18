@@ -1,4 +1,4 @@
- /*
+/*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
@@ -31,21 +31,29 @@ public class DAOVENTAS {
 
     }
 
-    public static int EliminarLista(List<Ventas> ventas, Ventas a) {
-        int cont = 0;
-        for (Ventas b : ventas) {
-            if (b.getProducto() == a.getProducto() && b.getCantidad() == a.getCantidad() && b.getPrecio() == a.getPrecio() && b.getSubtotal() == a.getSubtotal()) {
-                return cont;
-            }
-            cont++;
-        }
-        return 0;
     public int getOrdenS() {
         return OrdenS;
     }
 
     public void setOrdenS(int OrdenS) {
         this.OrdenS = OrdenS;
+    }
+
+    public static boolean Act(String N, double cantidad, int id) {
+        try {
+            if (CONEXION.conectar()) {
+                String sql = "UPDATE DETALLESORDEN SET CANTIDAD = ? WHERE orderid= ? and producto =" + "'" + N + "'";
+                PreparedStatement sentencia = CONEXION.conexion.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
+                sentencia.setDouble(1, cantidad);
+                sentencia.setInt(2, id);
+                sentencia.execute();
+                return true;
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, e);
+            return false;
+        }
+        return false;
     }
 
     public double PyS(String N) {
@@ -65,21 +73,15 @@ public class DAOVENTAS {
         return precio;
     }
 
-    public static boolean Act(String N, double cantidad, int id) {
-        try {
-            if (CONEXION.conectar()) {
-                String sql = "UPDATE DETALLESORDEN SET CANTIDAD = ? WHERE orderid= ? and producto =" + "'" + N + "'";
-                PreparedStatement sentencia = CONEXION.conexion.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
-                sentencia.setDouble(1, cantidad);
-                sentencia.setInt(2, id);
-                sentencia.execute();
-                return true;
+    public static int EliminarLista(List<Ventas> ventas, Ventas a) {
+        int cont = 0;
+        for (Ventas b : ventas) {
+            if (b.getProducto() == a.getProducto() && b.getCantidad() == a.getCantidad() && b.getPrecio() == a.getPrecio() && b.getSubtotal() == a.getSubtotal()) {
+                return cont;
             }
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, e);
-            return false;
+            cont++;
         }
-        return false;
+        return 0;
     }
 
     public boolean agregarVarios(List<Ventas> ventas, Ordenes objOrden, int bandera) throws Exception {
@@ -208,6 +210,7 @@ public class DAOVENTAS {
         return lista;
     }
 //BORRAR PLATILLO
+
     public boolean BorrarProducto(String a, int b) {
         try {
             if (CONEXION.conectar()) {
@@ -223,6 +226,7 @@ public class DAOVENTAS {
         return false;
     }
 //CONSULTA TODOS LOS DETALLES DE LAS ORDENES
+
     public ArrayList<Ventas> consultarTodos(int a) throws Exception {
         String sql = "SELECT Producto,Cantidad,Precio,Subtotal"
                 + "   FROM DETALLESORDEN where orderid =" + a;
@@ -251,9 +255,9 @@ public class DAOVENTAS {
 //        }
     }
 //REGRESA EL TOTAL DE UNA ORDEN
+
     public double TOTAL(double a) throws Exception {
-        String sql = "SELECT Subtotal"
-                + "   FROM DETALLESORDEN where orderid =" + a;
+            String sql = "SELECT Subtotal FROM DETALLESORDEN where orderid =" + a;
         try {
             if (CONEXION.conectar()) {
                 double T2 = 0;
@@ -274,6 +278,7 @@ public class DAOVENTAS {
 //        }
     }
 //CREAR EL TICKET
+
     public String consultarTodos1(int a) throws Exception {
         String sql = "SELECT Producto,Cantidad,Precio,Subtotal"
                 + "   FROM DETALLESORDEN where orderid =" + a;
@@ -304,12 +309,5 @@ public class DAOVENTAS {
         } catch (SQLException ex) {
             throw new Exception("No se ha podido realizar la operación " + ex);
         }
-    }
-    public int getOrdenS() {
-        return OrdenS;
-    }
-
-    public void setOrdenS(int OrdenS) {
-        this.OrdenS = OrdenS;
     }
 }
