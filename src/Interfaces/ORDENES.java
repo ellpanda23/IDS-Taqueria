@@ -1,4 +1,4 @@
-/*
+    /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
@@ -325,7 +325,7 @@ public class ORDENES extends javax.swing.JFrame {
                     new DAOORDENES().eliminarOrden((int) tb.getValueAt(TBLO.getSelectedRow(), 0));
                     JOptionPane.showMessageDialog(this, "LA ORDEN SE BORRO EXITOSAMENTE");
                     actualizarTabla();
-                    actualizarTablaD();
+                   tbl1.setVisible(false);
                 }
             } else {
                 JOptionPane.showMessageDialog(this, "DEBE SELECCIONAR LA ORDEN A ELIMINAR",

@@ -275,7 +275,7 @@ public class AGREGARORDEN extends javax.swing.JFrame {
      ArrayList<Ventas> listaVentas = new ArrayList<>();
     int contador = 0;
 
-    int indexTabla = 0;
+    int indexTabla = 0, b2 = 0;
 
     ArrayList<String> productos = new ArrayList<>();
 
@@ -284,7 +284,7 @@ public class AGREGARORDEN extends javax.swing.JFrame {
     private void btnAdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAdActionPerformed
         if (bandera == 0) {//VALIDA LA BANDERA SI ES 0 ES UNA ORDEN NUEVA
         } else {//SI NO, RECUPERA LOS PLATILLOS QUE HAY EN ESA ORDEN
-            this.productos = new DAOVENTAS().ConsultarEditar(bandera);
+            this.productos = b2 == 0 ? new DAOVENTAS().ConsultarEditar(bandera) : this.productos;
         }
         if ((int) Sp.getValue() <= 0) {//VALIDAR QUE LA CANTIDAD SEA MAYOR A 0
             JOptionPane.showMessageDialog(this, "La cantidad debe de ser mayor a 0");
@@ -335,6 +335,7 @@ public class AGREGARORDEN extends javax.swing.JFrame {
                         listaVentas.add(n);
                         contador++;
                         modelo.addRow(fila);
+                        b2 = bandera == 0 ? 0 : 1;
                     } catch (Exception ex) {
                         JOptionPane.showMessageDialog(this, ex.getMessage());
                     }
@@ -373,7 +374,9 @@ public class AGREGARORDEN extends javax.swing.JFrame {
                         } else {
                             if (DAOVENTAS.Act(CbProducto.getSelectedItem().toString(), a, bandera)) {
                                 JOptionPane.showMessageDialog(null, "SE ACTUALIZO CON EXITO");
-                                actualizarTablaD();
+                                if (b2 == 0) {
+                                    actualizarTablaD();
+                                }
                             } else {
                                 JOptionPane.showMessageDialog(null, "FALLO AL ACTUALIZAR");
                             }
@@ -428,7 +431,7 @@ public class AGREGARORDEN extends javax.swing.JFrame {
 
     private void btnEActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEActionPerformed
         String a = "";
-        if (tblVentas.getSelectedRow() >= 0 && tblVentas.getSelectedRowCount() < 2) {
+        if (tblVentas.getSelectedRow() > 0 && tblVentas.getSelectedRowCount() < 2) {
             DefaultTableModel mdl = (DefaultTableModel) tblVentas.getModel();
             int fila = JOptionPane.showConfirmDialog(this, "¿Deseas borrar este platillo?", "Sistema", JOptionPane.INFORMATION_MESSAGE);
             if (fila == JOptionPane.YES_OPTION) {
@@ -470,9 +473,9 @@ public class AGREGARORDEN extends javax.swing.JFrame {
                 }
             }
         } else if (tblVentas.getSelectedRow() >= 2) {
-            JOptionPane.showMessageDialog(this, "SELECCIONE UN PLATILLO", "Error", JOptionPane.WARNING_MESSAGE);
-        } else {
             JOptionPane.showMessageDialog(this, "SOLO PUEDE ELIMINARSE UN PLATILLO A LA VEZ", "Error", JOptionPane.WARNING_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(this, "SELECCIONE UN PLATILLO", "Error", JOptionPane.WARNING_MESSAGE);
         }
 
     }//GEN-LAST:event_btnEActionPerformed
