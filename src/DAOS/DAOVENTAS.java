@@ -1,4 +1,4 @@
- /*
+/*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
@@ -31,6 +31,14 @@ public class DAOVENTAS {
 
     }
 
+    public int getOrdenS() {
+        return OrdenS;
+    }
+
+    public void setOrdenS(int OrdenS) {
+        this.OrdenS = OrdenS;
+    }
+
     public static int EliminarLista(List<Ventas> ventas, Ventas a) {
         int cont = 0;
         for (Ventas b : ventas) {
@@ -40,12 +48,6 @@ public class DAOVENTAS {
             cont++;
         }
         return 0;
-    public int getOrdenS() {
-        return OrdenS;
-    }
-
-    public void setOrdenS(int OrdenS) {
-        this.OrdenS = OrdenS;
     }
 
     public double PyS(String N) {
@@ -207,7 +209,30 @@ public class DAOVENTAS {
         }
         return lista;
     }
+
+    public ArrayList<Ventas> ConsultarEditarT(int N) {
+        ArrayList<Ventas> lista = new ArrayList();
+        try {
+            if (CONEXION.conectar()) {
+                String sql = "SELECT * FROM DETALLESORDEN WHERE Orderid =" + N;
+                Statement consulta = CONEXION.conexion.createStatement();
+                ResultSet rsLista = consulta.executeQuery(sql);
+                while (rsLista.next()) {
+                    Ventas objP = new Ventas(
+                            rsLista.getString("Producto"),
+                            rsLista.getInt("Precio"),
+                            rsLista.getInt("Cantidad"),
+                            rsLista.getInt("Subtotal"));
+                    lista.add(objP);
+                }
+                return lista;
+            }
+        } catch (Exception e) {
+        }
+        return lista;
+    }
 //BORRAR PLATILLO
+
     public boolean BorrarProducto(String a, int b) {
         try {
             if (CONEXION.conectar()) {
@@ -223,6 +248,7 @@ public class DAOVENTAS {
         return false;
     }
 //CONSULTA TODOS LOS DETALLES DE LAS ORDENES
+
     public ArrayList<Ventas> consultarTodos(int a) throws Exception {
         String sql = "SELECT Producto,Cantidad,Precio,Subtotal"
                 + "   FROM DETALLESORDEN where orderid =" + a;
@@ -251,6 +277,7 @@ public class DAOVENTAS {
 //        }
     }
 //REGRESA EL TOTAL DE UNA ORDEN
+
     public double TOTAL(double a) throws Exception {
         String sql = "SELECT Subtotal"
                 + "   FROM DETALLESORDEN where orderid =" + a;
@@ -274,6 +301,7 @@ public class DAOVENTAS {
 //        }
     }
 //CREAR EL TICKET
+
     public String consultarTodos1(int a) throws Exception {
         String sql = "SELECT Producto,Cantidad,Precio,Subtotal"
                 + "   FROM DETALLESORDEN where orderid =" + a;
@@ -305,11 +333,5 @@ public class DAOVENTAS {
             throw new Exception("No se ha podido realizar la operación " + ex);
         }
     }
-    public int getOrdenS() {
-        return OrdenS;
-    }
 
-    public void setOrdenS(int OrdenS) {
-        this.OrdenS = OrdenS;
-    }
 }

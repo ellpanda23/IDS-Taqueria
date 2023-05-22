@@ -45,4 +45,28 @@ public class DAOPLATILLOS {
              CONEXION.desconectar();
         }
     }
+
+    public ArrayList<String> consultarTodos1() throws Exception {
+        try {
+            if (CONEXION.conectar()) {
+                String sql = "SELECT Nombre "
+                        + " FROM Platillos";
+
+                Statement consulta = CONEXION.conexion.createStatement();
+                ResultSet rsLista = consulta.executeQuery(sql);
+                ArrayList<String> listaProductos = new ArrayList<>();
+                while (rsLista.next()) {
+                    String a = rsLista.getString("Nombre");
+                    listaProductos.add(a);
+                }
+                return listaProductos;
+            } else {
+                throw new Exception("No se ha podido conectar con el servidor");
+            }
+        } catch (SQLException ex) {
+            throw new Exception("No se ha podido realizar la operación");
+        } finally {
+            CONEXION.desconectar();
+        }
+    }
 }

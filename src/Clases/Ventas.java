@@ -12,11 +12,11 @@ public class Ventas {
 
     private int id;
     private String producto;
-    private double cantidad;
+    private int cantidad;
     private double precio;
     private double subtotal;
 
-    public Ventas(int id, String producto,  double precio,double cantidad, double subtotal) {
+    public Ventas(int id, String producto,  double precio, int cantidad, double subtotal) {
         this.id = id;
         this.producto = producto;
         this.cantidad = cantidad;
@@ -24,7 +24,7 @@ public class Ventas {
         this.subtotal = subtotal;
     }
 
-    public Ventas(String producto,  double precio,double cantidad, double subtotal) {
+    public Ventas(String producto,  double precio,int cantidad, double subtotal) {
 
         this.producto = producto;
         this.cantidad = cantidad;

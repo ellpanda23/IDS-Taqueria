@@ -4,6 +4,8 @@
  */
 package Interfaces;
 
+import Clases.Cliente;
+import Clases.Empleado;
 import Clases.Facturas;
 import Clases.Ordenes;
 import Clases.Platillos;
@@ -27,10 +29,10 @@ import javax.swing.table.TableColumn;
  * @author Brayan
  */
 public class AGREGARORDEN extends javax.swing.JFrame {
-    
+
     static int bandera = 0;
     static int a = 0;
-    
+
     public AGREGARORDEN(int bandera) throws SQLException {
         initComponents();
         Sp.setValue(1);
@@ -44,7 +46,7 @@ public class AGREGARORDEN extends javax.swing.JFrame {
             jLabel1.setText("ORDEN: " + bandera);
         }
         try {
-            ArrayList<String> Productos = new DAOPLATILLOS().consultarTodos();
+            ArrayList<String> Productos = new DAOPLATILLOS().consultarTodos1();
             DefaultComboBoxModel modeloCat = (DefaultComboBoxModel) CbProducto.getModel();
             for (String Producto : Productos) {
                 modeloCat.addElement(Producto);
@@ -53,13 +55,12 @@ public class AGREGARORDEN extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, e);
         }
         actualizarTablaD();
-        
+
         this.setLocationRelativeTo(null);
         this.setTitle("Ventas");
-        //lblCliente.setText(cliente.getName());
     }
     DefaultTableModel model = new DefaultTableModel();
-    
+
     public void actualizarTablaD() {
         if (bandera == 0) {
         } else {
@@ -77,10 +78,10 @@ public class AGREGARORDEN extends javax.swing.JFrame {
                     modelo.addRow(fila);
                 }
                 productos = new DAOVENTAS().ConsultarEditar(bandera);
-                
+
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(this, ex.getMessage());
-                
+
             }
         }
     }
@@ -119,6 +120,8 @@ public class AGREGARORDEN extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setAutoRequestFocus(false);
+        setResizable(false);
+        setType(java.awt.Window.Type.UTILITY);
 
         tblVentas.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -150,7 +153,7 @@ public class AGREGARORDEN extends javax.swing.JFrame {
         jLabel1.setText("VENTA: ");
 
         jLabel2.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
-        jLabel2.setText("PRODUCTO");
+        jLabel2.setText("PLATILLO");
 
         jLabel3.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         jLabel3.setText("CANTIDAD");
@@ -195,7 +198,7 @@ public class AGREGARORDEN extends javax.swing.JFrame {
 
         jLabel4.setText("Cliente: ");
 
-        lblCliente.setText("asdlf");
+        lblCliente.setText("JOSE");
 
         jPanel1.setBackground(new java.awt.Color(51, 51, 255));
 
@@ -286,17 +289,21 @@ public class AGREGARORDEN extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
      ArrayList<Ventas> listaVentas = new ArrayList<>();
     int contador = 0;
-    
+
     int indexTabla = 0;
-    
+
     ArrayList<String> productos = new ArrayList<>();
-    
+
     boolean flag = true;
 
     private void btnAdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAdActionPerformed
         if (bandera == 0) {
         } else {
-            this.productos = new DAOVENTAS().ConsultarEditar(bandera);
+            if (contador == 0) {
+                this.productos = new DAOVENTAS().ConsultarEditar(bandera);
+                this.listaVentas = new DAOVENTAS().ConsultarEditarT(bandera);
+                contador++;
+            }
         }
         if ((int) Sp.getValue() <= 0) {
             JOptionPane.showMessageDialog(this, "La cantidad debe de ser mayor a 0");
@@ -310,14 +317,17 @@ public class AGREGARORDEN extends javax.swing.JFrame {
                     double subtotal = cantidad * Precio;
                     Object[] fila = new Object[]{
                         CbProducto.getSelectedItem(), Precio, Sp.getValue(), subtotal};
-                    
+
                     String a = (String) CbProducto.getSelectedItem();
                     int b = (int) Sp.getValue();
                     double c = Precio, d = subtotal;
                     Ventas n = new Ventas(a, (int) c, b, d);
-                    
+
                     listaVentas.add(n);
-                    contador++;
+                    if (bandera != 0) {
+                        productos.add(CbProducto.getSelectedItem().toString());
+                    }
+                    // contador++;
                     modelo.addRow(fila);
                 } catch (Exception ex) {
                     JOptionPane.showMessageDialog(this, ex.getMessage());
@@ -345,7 +355,7 @@ public class AGREGARORDEN extends javax.swing.JFrame {
                         double c = Precio, d = subtotal;
                         Ventas n = new Ventas(a, (int) c, b, d);
                         listaVentas.add(n);
-                        contador++;
+//                        contador++;
                         modelo.addRow(fila);
                     } catch (Exception ex) {
                         JOptionPane.showMessageDialog(this, ex.getMessage());
@@ -353,18 +363,18 @@ public class AGREGARORDEN extends javax.swing.JFrame {
                 } else {
                     try {
                         DefaultTableModel modelo = (DefaultTableModel) tblVentas.getModel();
-                        double a = 0;
-                        Ventas aG = new Ventas("as", 1, 1.0, 1);
+                        int a = 0;
+                        Ventas aG = new Ventas("as", 1, 1, 1);
                         for (int i = 0; i < productos.size(); i++) {
                             String a1 = modelo.getValueAt(i, 0).toString();
                             String a2 = CbProducto.getSelectedItem().toString();
                             if (a1.equals(a2)) {
-                                a = Integer.parseInt(modelo.getValueAt(i, 2).toString());
-                                a += Integer.parseInt(Sp.getValue().toString());
+                                a =(int) Double.parseDouble(modelo.getValueAt(i, 2).toString());
+                                a +=(int) Integer.parseInt(Sp.getValue().toString());
                                 Object b = a;
                                 aG.setProducto((String) modelo.getValueAt(i, 0));
                                 aG.setPrecio((Double) modelo.getValueAt(i, 1));
-                                aG.setCantidad((int) modelo.getValueAt(i, 2));
+                                aG.setCantidad((int) Double.parseDouble(modelo.getValueAt(i, 2).toString()));
                                 aG.setSubtotal((Double) modelo.getValueAt(i, 3));
                                 int Bo = DAOVENTAS.EliminarLista(listaVentas, aG);
                                 listaVentas.remove(Bo);
@@ -376,7 +386,7 @@ public class AGREGARORDEN extends javax.swing.JFrame {
                             String no = (String) CbProducto.getSelectedItem();
                             double subtotal = a * Precio;
                             double c = Precio, d = subtotal;
-                            Ventas n = new Ventas(no, (int) c, a, d);
+                            Ventas n = new Ventas(no, c, a, d);
                             listaVentas.add(n);
                             contador++;
                         } else {
@@ -386,13 +396,13 @@ public class AGREGARORDEN extends javax.swing.JFrame {
                                 JOptionPane.showMessageDialog(null, "FALLO AL ACTUALIZAR");
                             }
                         }
-                        
+
                     } catch (Exception e) {
                         JOptionPane.showMessageDialog(this, e);
                     }
-                    
+
                 }
-                
+
             }
         }
         Sp.setValue(1);
@@ -412,15 +422,18 @@ public class AGREGARORDEN extends javax.swing.JFrame {
                     String a = (String) modeloCat.getSelectedItem();
                     //FALTA MODIFICAR EL ID DEL EMPLEADO Y CLIENTE
                     Ordenes obj = new Ordenes(1, 2, String.valueOf(LocalDate.now()), a);
-                    
+
                     if (new DAOVENTAS().agregarVarios(listaVentas, obj, bandera)) {
-                        Facturas obj1 = new Facturas(DAOORDENES.UltimaO(), 1, 1, String.valueOf(LocalDate.now()), DAOFACTURAS.TOTAL(AGREGARORDEN.a));
+
+                        Cliente ja = new Cliente(1, "JOSE");
+                        Empleado j1 = new Empleado(1, "MANUEL");
+                        Facturas obj1 = new Facturas(DAOORDENES.UltimaO(), ja, j1, String.valueOf(LocalDate.now()), DAOFACTURAS.TOTAL(AGREGARORDEN.a));
                         if (new DAOFACTURAS().fac(obj1)) {
                             JOptionPane.showMessageDialog(this, "La transacción se realizo con exito");
                         }
                     }
                 } catch (Exception ex) {
-                    
+
                     JOptionPane.showMessageDialog(this, ex);
                 }
                 new ORDENES().setVisible(true);
@@ -433,7 +446,7 @@ public class AGREGARORDEN extends javax.swing.JFrame {
         new ORDENES().setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_btnOActionPerformed
-    
+
 
     private void btnEActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEActionPerformed
         String a = "";
@@ -446,7 +459,7 @@ public class AGREGARORDEN extends javax.swing.JFrame {
                 double b = (double) mdl.getValueAt(tblVentas.getSelectedRow(), 1);
                 c = (double) mdl.getValueAt(tblVentas.getSelectedRow(), 2);
                 double d = (double) mdl.getValueAt(tblVentas.getSelectedRow(), 3);
-                Ventas j = new Ventas(0, a, b, c, d);
+                Ventas j = new Ventas(0, a, b, (int) c, d);
                 mdl.removeRow(tblVentas.getSelectedRow());
                 boolean f = false;
                 if (bandera == 0) {
@@ -494,7 +507,7 @@ public class AGREGARORDEN extends javax.swing.JFrame {
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
-            
+
             public void run() {
                 try {
                     new AGREGARORDEN(bandera).setVisible(true);

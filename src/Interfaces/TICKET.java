@@ -26,7 +26,7 @@ public class TICKET extends javax.swing.JFrame {
         actualizarTablaD(a);
         TICKET.a = a;
         lblNo.setText("No.Orden = " + a);
-        //lblTotal.setText("TOTAL = " + new DAOVENTAS().TOTAL(a));
+        lblTotal.setText("TOTAL = " + new DAOVENTAS().TOTAL(a));
     }
 
     /**

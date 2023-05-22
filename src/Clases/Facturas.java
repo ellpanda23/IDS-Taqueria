@@ -17,10 +17,10 @@ public class Facturas {
     String Fecha;
     double Total;
 
-    public Facturas(int Facid, int clienteId, int empleadoId, String Fecha, double Total) {
+    public Facturas(int Facid, Cliente clienteId, Empleado empleadoId, String Fecha, double Total) {
         this.Facid = Facid;
-        this.cliente = new Cliente(clienteId);
-        this.empleado = new Empleado(empleadoId);
+        this.cliente = new Cliente(1,"JOSE");
+        this.empleado = new Empleado(1,"MANUEL");
         this.Fecha = Fecha;
         this.Total = Total;
     }

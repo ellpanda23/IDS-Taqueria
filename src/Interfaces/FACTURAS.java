@@ -161,8 +161,8 @@ public class FACTURAS extends javax.swing.JFrame {
             for (Facturas p : listaProductos) {
                 Object[] fila = new Object[]{
                     p.getFacid(),
-                    p.getCliente(),
-                    p.getEmpleado(),
+                    p.getCliente().getId(),
+                    p.getEmpleado().getId(),
                     p.getFecha(),
                     p.getTotal()
                 };

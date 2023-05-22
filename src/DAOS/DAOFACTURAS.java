@@ -83,30 +83,37 @@ public class DAOFACTURAS {
             CONEXION.desconectar();
         }
     }
-//
-//    public int agregar(Facturas fac) throws Exception {
-//        try {
-//            if (CONEXION.conectar()) {
-//                String sql = "INSERT INTO FACTURAS(Facturaid,Cliente,Empleado,Fecha,Total)"
-//                        + " VALUES(?,?,?,?,?)";
-//                PreparedStatement sentencia = CONEXION.conexion.prepareStatement(sql,
-//                        PreparedStatement.RETURN_GENERATED_KEYS);
-//                sentencia.setInt(1, (int) DAOORDENES.UltimaO());
-//                sentencia.setInt(2, 1);
-//                sentencia.setInt(3, 1);
-//                sentencia.setString(4, "");
-//                sentencia.setInt(5, 12);
-//                sentencia.executeUpdate();
-//
-//            }
-//        } catch (Exception e) {
-//            JOptionPane.showMessageDialog(null, "no se ha podido agregar");
-//        }
-//        return -1;
-//    }
+
+    public ArrayList<Facturas> consultarTodos() throws Exception {
+        String sql = "SELECT * FROM Facturas";
+        try {
+            if (CONEXION.conectar()) {
+                Statement consulta = CONEXION.conexion.createStatement();
+                ResultSet rsLista = consulta.executeQuery(sql);
+                ArrayList<Facturas> listaOrdenes = new ArrayList<>();
+                while (rsLista.next()) {
+                    Cliente a = new Cliente((int) rsLista.getObject("Cliente"), "JOSE");
+                    Empleado a1 = new Empleado((int) rsLista.getObject("Empleado"), "MANUEL");
+                    Facturas objP = new Facturas(
+                            rsLista.getInt("Facturaid"),
+                            (a),
+                            (a1),
+                            rsLista.getString("Fecha"),
+                            rsLista.getDouble("Total"));
+                    listaOrdenes.add(objP);
+                }
+                return listaOrdenes;
+            } else {
+                throw new Exception("No se ha podido conectar con el servidor");
+            }
+        } catch (SQLException ex) {
+            throw new Exception("No se ha podido realizar la operación");
+        } finally {
+            CONEXION.desconectar();
+        }
+    }
 
     // REPORTE DETALLADO DE VENTAS
-    
     public ArrayList<Facturas> consultarRangoFechas(Date fechaDesde, Date fechaHasta) throws Exception {
         String sql = "SELECT * FROM Facturas WHERE Fecha >= ? AND Fecha <= ? ORDER BY facturaid ASC";
         try {
@@ -148,8 +155,6 @@ public class DAOFACTURAS {
         }
     }
 
-
-    
     public ArrayList<Facturas> consultarDesde(Date fechaDesde) throws Exception {
         String sql = "SELECT * FROM Facturas WHERE Fecha >= ? ORDER BY facturaid ASC";
         try {
@@ -165,7 +170,7 @@ public class DAOFACTURAS {
 
                     DAOCLIENTES daoClientes = new DAOCLIENTES();
                     DAOEMPLEADOS daoEmpleado = new DAOEMPLEADOS();
-                    
+
                     // Obtener los objetos Cliente y Empleado a partir de sus IDs
                     Cliente cliente = daoClientes.obtenerClientePorId(idCliente);
                     Empleado empleado = daoEmpleado.obtenerEmpleadoPorId(idEmpleado);
@@ -189,7 +194,7 @@ public class DAOFACTURAS {
             CONEXION.desconectar();
         }
     }
-    
+
     public ArrayList<Facturas> consultarHasta(Date fechaHasta) throws Exception {
         String sql = "SELECT * FROM Facturas WHERE Fecha <= ? ORDER BY facturaid ASC";
         try {
@@ -205,11 +210,11 @@ public class DAOFACTURAS {
 
                     DAOCLIENTES daoClientes = new DAOCLIENTES();
                     DAOEMPLEADOS daoEmpleado = new DAOEMPLEADOS();
-                    
+
                     // Obtener los objetos Cliente y Empleado a partir de sus IDs
                     Cliente cliente = daoClientes.obtenerClientePorId(idCliente);
                     Empleado empleado = daoEmpleado.obtenerEmpleadoPorId(idEmpleado);
-                    
+
                     Facturas objFactura = new Facturas(
                             rsLista.getInt("Facturaid"),
                             cliente,
@@ -229,7 +234,6 @@ public class DAOFACTURAS {
         }
     }
 
-    
     public Facturas buscarFacturaPorId(int id) throws Exception {
         String sql = "SELECT * FROM Facturas WHERE Facturaid = ?";
         try {
@@ -238,20 +242,18 @@ public class DAOFACTURAS {
                 consulta.setInt(1, id);
                 ResultSet rs = consulta.executeQuery();
                 if (rs.next()) {
-                    
+
                     // Obtener los IDs del cliente y el empleado
                     int idCliente = rs.getInt("Cliente");
                     int idEmpleado = rs.getInt("Empleado");
 
                     DAOCLIENTES daoClientes = new DAOCLIENTES();
                     DAOEMPLEADOS daoEmpleado = new DAOEMPLEADOS();
-                    
+
                     // Obtener los objetos Cliente y Empleado a partir de sus IDs
                     Cliente cliente = daoClientes.obtenerClientePorId(idCliente);
                     Empleado empleado = daoEmpleado.obtenerEmpleadoPorId(idEmpleado);
-                    
-                    
-                    
+
                     Facturas factura = new Facturas(
                             rs.getInt("Facturaid"),
                             cliente,
@@ -271,19 +273,16 @@ public class DAOFACTURAS {
             CONEXION.desconectar();
         }
     }
-    
-    
 
     public ArrayList<Facturas> buscarFacturas(String criterio) throws Exception {
         try {
             if (CONEXION.conectar()) {
-                if(criterio.matches("[0-9]+"))
-                {
+                if (criterio.matches("[0-9]+")) {
                     ArrayList<Facturas> listaFacturas = new ArrayList<>();
                     listaFacturas.add(buscarFacturaPorId(Integer.parseInt(criterio)));
                     return listaFacturas;
                 }
-                
+
                 String sql = "SELECT * FROM Facturas WHERE Empleado IN (SELECT idEmpleado FROM Empleados WHERE Nombre LIKE ?) OR Fecha LIKE ? OR Cliente IN (SELECT idCliente FROM Clientes WHERE Nombre LIKE ?) ORDER BY facturaid ASC";
                 PreparedStatement consulta = CONEXION.conexion.prepareStatement(sql);
                 consulta.setString(1, "%" + criterio + "%");
@@ -292,18 +291,18 @@ public class DAOFACTURAS {
                 ResultSet rsLista = consulta.executeQuery();
                 ArrayList<Facturas> listaFacturas = new ArrayList<>();
                 while (rsLista.next()) {
-                    
+
                     // Obtener los IDs del cliente y el empleado
                     int idCliente = rsLista.getInt("Cliente");
                     int idEmpleado = rsLista.getInt("Empleado");
 
                     DAOCLIENTES daoClientes = new DAOCLIENTES();
                     DAOEMPLEADOS daoEmpleado = new DAOEMPLEADOS();
-                    
+
                     // Obtener los objetos Cliente y Empleado a partir de sus IDs
                     Cliente cliente = daoClientes.obtenerClientePorId(idCliente);
                     Empleado empleado = daoEmpleado.obtenerEmpleadoPorId(idEmpleado);
-                    
+
                     Facturas objFactura = new Facturas(
                             rsLista.getInt("Facturaid"),
                             cliente,
@@ -322,7 +321,7 @@ public class DAOFACTURAS {
             CONEXION.desconectar();
         }
     }
-    
+
     public ArrayList<Facturas> consultarRangoCriterio(String criterio, Date fechaDesde, Date fechaHasta) throws Exception {
         try {
             if (CONEXION.conectar()) {
@@ -371,7 +370,7 @@ public class DAOFACTURAS {
             CONEXION.desconectar();
         }
     }
-    
+
     public ArrayList<Facturas> consultarDesdeCriterio(String criterio, Date fechaDesde) throws Exception {
         try {
             if (CONEXION.conectar()) {
@@ -419,7 +418,7 @@ public class DAOFACTURAS {
             CONEXION.desconectar();
         }
     }
-    
+
     public ArrayList<Facturas> consultarHastaCriterio(String criterio, Date fechaHasta) throws Exception {
         try {
             if (CONEXION.conectar()) {
@@ -467,6 +466,5 @@ public class DAOFACTURAS {
             CONEXION.desconectar();
         }
     }
-
 
 }
