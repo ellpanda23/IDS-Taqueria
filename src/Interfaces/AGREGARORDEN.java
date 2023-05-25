@@ -120,6 +120,7 @@ public class AGREGARORDEN extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setAutoRequestFocus(false);
+        setUndecorated(true);
         setResizable(false);
         setType(java.awt.Window.Type.UTILITY);
 
@@ -223,10 +224,10 @@ public class AGREGARORDEN extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 735, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING)
             .addComponent(jToolBar1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
+                .addGap(0, 546, Short.MAX_VALUE)
                 .addComponent(BtnFinalizar, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -301,7 +302,6 @@ public class AGREGARORDEN extends javax.swing.JFrame {
         } else {
             if (contador == 0) {
                 this.productos = new DAOVENTAS().ConsultarEditar(bandera);
-                this.listaVentas = new DAOVENTAS().ConsultarEditarT(bandera);
                 contador++;
             }
         }
@@ -355,7 +355,7 @@ public class AGREGARORDEN extends javax.swing.JFrame {
                         double c = Precio, d = subtotal;
                         Ventas n = new Ventas(a, (int) c, b, d);
                         listaVentas.add(n);
-//                        contador++;
+                        contador++;
                         modelo.addRow(fila);
                     } catch (Exception ex) {
                         JOptionPane.showMessageDialog(this, ex.getMessage());
@@ -369,16 +369,36 @@ public class AGREGARORDEN extends javax.swing.JFrame {
                             String a1 = modelo.getValueAt(i, 0).toString();
                             String a2 = CbProducto.getSelectedItem().toString();
                             if (a1.equals(a2)) {
-                                a =(int) Double.parseDouble(modelo.getValueAt(i, 2).toString());
-                                a +=(int) Integer.parseInt(Sp.getValue().toString());
-                                Object b = a;
+                                a = (int) Double.parseDouble(modelo.getValueAt(i, 2).toString());
+                                a += (int) Integer.parseInt(Sp.getValue().toString());
                                 aG.setProducto((String) modelo.getValueAt(i, 0));
                                 aG.setPrecio((Double) modelo.getValueAt(i, 1));
                                 aG.setCantidad((int) Double.parseDouble(modelo.getValueAt(i, 2).toString()));
                                 aG.setSubtotal((Double) modelo.getValueAt(i, 3));
-                                int Bo = DAOVENTAS.EliminarLista(listaVentas, aG);
-                                listaVentas.remove(Bo);
-                                modelo.setValueAt(b, i, 2);
+                                if (bandera == 0) {
+                                    int Bo = DAOVENTAS.EliminarLista(listaVentas, aG);
+                                    listaVentas.remove(Bo);
+                                    modelo.setValueAt(a, i, 2);
+                                    modelo.setValueAt(a * aG.getPrecio(), i, 3);
+                                } else {
+                                    if (DAOVENTAS.ConsultarEditarT(CbProducto.getSelectedItem().toString(),bandera)) {
+                                        if (DAOVENTAS.Act(CbProducto.getSelectedItem().toString(), a, bandera)) {
+                                            modelo.setValueAt(a, i, 2);
+                                            aG.setCantidad((int) Double.parseDouble(modelo.getValueAt(i, 2).toString()));
+                                        }
+                                    } else {
+                                        for (int h= 0;h < listaVentas.size();h++) {
+                                            if (h < listaVentas.size() && CbProducto.getSelectedItem().toString() == listaVentas.get(h).getProducto()) {
+                                                Ventas d = listaVentas.get(h);
+                                                modelo.setValueAt(a, i, 2);
+                                                d.setCantidad(a);
+                                                listaVentas.remove(h);
+                                                listaVentas.add(d);
+//                                                h++;
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }
                         if (bandera == 0) {
@@ -389,12 +409,6 @@ public class AGREGARORDEN extends javax.swing.JFrame {
                             Ventas n = new Ventas(no, c, a, d);
                             listaVentas.add(n);
                             contador++;
-                        } else {
-                            if (DAOVENTAS.Act(CbProducto.getSelectedItem().toString(), a, bandera)) {
-                                JOptionPane.showMessageDialog(null, "SE ACTUALIZO CON EXITO");
-                            } else {
-                                JOptionPane.showMessageDialog(null, "FALLO AL ACTUALIZAR");
-                            }
                         }
 
                     } catch (Exception e) {
@@ -421,10 +435,9 @@ public class AGREGARORDEN extends javax.swing.JFrame {
                     DefaultComboBoxModel modeloCat = (DefaultComboBoxModel) CbL.getModel();
                     String a = (String) modeloCat.getSelectedItem();
                     //FALTA MODIFICAR EL ID DEL EMPLEADO Y CLIENTE
-                    Ordenes obj = new Ordenes(1, 2, String.valueOf(LocalDate.now()), a);
+                    Ordenes obj = new Ordenes(1, 1, String.valueOf(LocalDate.now()), a);
 
                     if (new DAOVENTAS().agregarVarios(listaVentas, obj, bandera)) {
-
                         Cliente ja = new Cliente(1, "JOSE");
                         Empleado j1 = new Empleado(1, "MANUEL");
                         Facturas obj1 = new Facturas(DAOORDENES.UltimaO(), ja, j1, String.valueOf(LocalDate.now()), DAOFACTURAS.TOTAL(AGREGARORDEN.a));
@@ -435,6 +448,9 @@ public class AGREGARORDEN extends javax.swing.JFrame {
                 } catch (Exception ex) {
 
                     JOptionPane.showMessageDialog(this, ex);
+                }
+                if (bandera != 0) {
+                    JOptionPane.showMessageDialog(null, "SE ACTUALIZO CON EXITO");
                 }
                 new ORDENES().setVisible(true);
                 this.setVisible(false);
@@ -483,8 +499,8 @@ public class AGREGARORDEN extends javax.swing.JFrame {
                 try {
                     boolean B = new DAOVENTAS().BorrarProducto(a, bandera);
                     if (B) {
-                        actualizarTablaD();
-                        JOptionPane.showMessageDialog(this, "EL PRODUCTO SE ELIMINO CORRECTAMENTE");
+                       JOptionPane.showMessageDialog(this, "EL PRODUCTO SE ELIMINO CORRECTAMENTE\n SE ACTUALIZARA AUTOMATICAMENTE"
+ + " DESPUES DE FINALIZAR LA ORDEN");
                     } else {
                         JOptionPane.showMessageDialog(this, "EL PRODUCTO NO SE ELIMINO CORRECTAMENTE");
                     }

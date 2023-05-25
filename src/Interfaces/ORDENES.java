@@ -83,6 +83,7 @@ public class ORDENES extends javax.swing.JFrame {
         jButton2 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setUndecorated(true);
         setResizable(false);
         setType(java.awt.Window.Type.UTILITY);
 
@@ -313,14 +314,16 @@ public class ORDENES extends javax.swing.JFrame {
     }//GEN-LAST:event_btnAgregarOActionPerformed
 
     private void btnTicketActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTicketActionPerformed
-        try {
+//AGREGAR MENSAJE SOBRE LA SELECCION DE LA ORDEN A GENERAR
+     if(TBLO.getSelectedRow()>=0){
+         try {
             int b= (int) TBLO.getValueAt(TBLO.getSelectedRow(),0);
             new TICKET(b).setVisible(true);
             this.setVisible(false);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, e);
         }
-        this.setVisible(false);
+        this.setVisible(false);}else{JOptionPane.showMessageDialog(null,"DEBE SELECCIONAR UNA ORDEN\nPARA EDITAR");}
     }//GEN-LAST:event_btnTicketActionPerformed
 
     private void btnDescartarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDescartarActionPerformed

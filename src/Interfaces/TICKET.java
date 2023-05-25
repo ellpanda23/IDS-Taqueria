@@ -48,6 +48,7 @@ public class TICKET extends javax.swing.JFrame {
         btnImprimir = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setUndecorated(true);
 
         tblt.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {

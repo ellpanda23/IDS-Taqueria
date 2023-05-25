@@ -210,27 +210,23 @@ public class DAOVENTAS {
         return lista;
     }
 
-    public ArrayList<Ventas> ConsultarEditarT(int N) {
+    public static boolean ConsultarEditarT(String N, int a) {
         ArrayList<Ventas> lista = new ArrayList();
         try {
             if (CONEXION.conectar()) {
-                String sql = "SELECT * FROM DETALLESORDEN WHERE Orderid =" + N;
+                String sql = "SELECT * FROM DETALLESORDEN WHERE Producto =" +"'"+N+"'" +" and orderid ="+ a;
                 Statement consulta = CONEXION.conexion.createStatement();
                 ResultSet rsLista = consulta.executeQuery(sql);
                 while (rsLista.next()) {
-                    Ventas objP = new Ventas(
-                            rsLista.getString("Producto"),
-                            rsLista.getInt("Precio"),
-                            rsLista.getInt("Cantidad"),
-                            rsLista.getInt("Subtotal"));
-                    lista.add(objP);
+                  return true;          
                 }
-                return lista;
+                return false;
             }
         } catch (Exception e) {
         }
-        return lista;
+        return false;
     }
+
 //BORRAR PLATILLO
 
     public boolean BorrarProducto(String a, int b) {
