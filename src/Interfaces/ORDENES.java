@@ -4,12 +4,12 @@
  */
 package Interfaces;
 
+import Clases.CONEXION;
 import Clases.Ordenes;
 import Clases.Ventas;
-import DAOS.DAOFACTURAS;
 import DAOS.DAOORDENES;
 import DAOS.DAOVENTAS;
-//import java.awt.HeadlessException;
+import java.awt.HeadlessException;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -31,21 +31,25 @@ public class ORDENES extends javax.swing.JFrame {
      */
     public ORDENES() {
         initComponents();
-        actualizarTabla();
+        if (CONEXION.conectar()) {
 
-        MouseListener mouseListener = new MouseAdapter() {
-            public void mouseClicked(MouseEvent e) {
-                comprobarSeleccion();
-            }
+            actualizarTabla();
+            MouseListener mouseListener = new MouseAdapter() {
+                public void mouseClicked(MouseEvent e) {
+                    comprobarSeleccion();
+                }
 
-            public void mouseReleased(MouseEvent e) {
-                comprobarSeleccion();
-            }
-        };
-        TBLO.addMouseListener(mouseListener);
-        pnl1.setVisible(false);
-        tbl1.setVisible(false);
-        
+                public void mouseReleased(MouseEvent e) {
+                    comprobarSeleccion();
+                }
+            };
+            TBLO.addMouseListener(mouseListener);
+            pnl1.setVisible(false);
+            tbl1.setVisible(false);
+        } else {
+            JOptionPane.showMessageDialog(null, "ERROR AL CONECTAR CON EL SERVIDOR");
+        }
+
     }
 
     private void comprobarSeleccion() {
@@ -80,12 +84,8 @@ public class ORDENES extends javax.swing.JFrame {
         pnl1 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         tbl1 = new javax.swing.JTable();
-        jButton2 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setUndecorated(true);
-        setResizable(false);
-        setType(java.awt.Window.Type.UTILITY);
 
         TBLO.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -205,14 +205,6 @@ public class ORDENES extends javax.swing.JFrame {
                 .addGap(0, 170, Short.MAX_VALUE))
         );
 
-        jButton2.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        jButton2.setText("REGRESAR");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
-            }
-        });
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -227,14 +219,9 @@ public class ORDENES extends javax.swing.JFrame {
                             .addComponent(lblUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 470, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(pnl1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnTicket, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 252, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(104, 104, 104))))
+                .addComponent(pnl1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnTicket, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -252,8 +239,6 @@ public class ORDENES extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(pnl1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(btnTicket, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(29, 29, 29)
-                        .addComponent(jButton2)
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -314,16 +299,24 @@ public class ORDENES extends javax.swing.JFrame {
     }//GEN-LAST:event_btnAgregarOActionPerformed
 
     private void btnTicketActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnTicketActionPerformed
-//AGREGAR MENSAJE SOBRE LA SELECCION DE LA ORDEN A GENERAR
-     if(TBLO.getSelectedRow()>=0){
-         try {
-            int b= (int) TBLO.getValueAt(TBLO.getSelectedRow(),0);
-            new TICKET(b).setVisible(true);
-            this.setVisible(false);
-        } catch (Exception e) {
+        DefaultTableModel modelo0 = (DefaultTableModel) TBLO.getModel();
+        try {
+            if (TBLO.getSelectedRow() >= 0 && TBLO.getSelectedRowCount() < 2) {
+                int a = (int) modelo0.getValueAt(TBLO.getSelectedRow(), 0);
+                new TICKET(a).setVisible(true);
+                this.setVisible(false);
+            } else if (TBLO.getSelectedRowCount() == 0) {
+                JOptionPane.showMessageDialog(this, "DEBE SELECCIONAR LA ORDEN PARA GENERAR EL TICKET",
+                        "¡ERROR!", JOptionPane.WARNING_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, "SOLO PUEDE SELECCIONAR UNA ORDEN PARA GENERAR EL TICKET",
+                        "¡ERROR!", JOptionPane.WARNING_MESSAGE);
+            }
+        } catch (HeadlessException e) {
             JOptionPane.showMessageDialog(this, e);
+        } catch (Exception ex) {
+            Logger.getLogger(ORDENES.class.getName()).log(Level.SEVERE, null, ex);
         }
-        this.setVisible(false);}else{JOptionPane.showMessageDialog(null,"DEBE SELECCIONAR UNA ORDEN\nPARA EDITAR");}
     }//GEN-LAST:event_btnTicketActionPerformed
 
     private void btnDescartarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDescartarActionPerformed
@@ -335,7 +328,6 @@ public class ORDENES extends javax.swing.JFrame {
                     new DAOORDENES().eliminarOrden((int) tb.getValueAt(TBLO.getSelectedRow(), 0));
                     JOptionPane.showMessageDialog(this, "LA ORDEN SE BORRO EXITOSAMENTE");
                     actualizarTabla();
-                    //actualizarTablaD();
                 }
             } else {
                 JOptionPane.showMessageDialog(this, "DEBE SELECCIONAR LA ORDEN A ELIMINAR",
@@ -364,11 +356,6 @@ public class ORDENES extends javax.swing.JFrame {
                     "¡ERROR!", JOptionPane.WARNING_MESSAGE);
         }
     }//GEN-LAST:event_jButton1ActionPerformed
-
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        new MenuPrincipal().setVisible(true);
-        this.setVisible(false);
-    }//GEN-LAST:event_jButton2ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -411,7 +398,6 @@ public class ORDENES extends javax.swing.JFrame {
     private javax.swing.JButton btnDescartar;
     private javax.swing.JButton btnTicket;
     private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;

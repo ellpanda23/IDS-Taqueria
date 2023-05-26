@@ -10,17 +10,24 @@ package Clases;
  */
 public class Facturas {
 
-
     int Facid;
     Cliente cliente;
     Empleado empleado;
     String Fecha;
     double Total;
 
-    public Facturas(int Facid, Cliente clienteId, Empleado empleadoId, String Fecha, double Total) {
+    public Facturas(int Facid, int clienteId, int empleadoId, String Fecha, double Total) {
         this.Facid = Facid;
-        this.cliente = new Cliente(1,"JOSE");
-        this.empleado = new Empleado(1,"MANUEL");
+        this.cliente = new Cliente(clienteId);
+        this.empleado = new Empleado(empleadoId);
+        this.Fecha = Fecha;
+        this.Total = Total;
+    }
+
+    public Facturas(int Facid, Cliente cliente, Empleado empleado, String Fecha, double Total) {
+        this.Facid = Facid;
+        this.cliente = cliente;
+        this.empleado = empleado;
         this.Fecha = Fecha;
         this.Total = Total;
     }
@@ -49,6 +56,7 @@ public class Facturas {
     public void setEmpleado(Empleado empleado) {
         this.empleado = empleado;
     }
+
 
     public String getFecha() {
         return Fecha;

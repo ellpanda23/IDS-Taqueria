@@ -127,7 +127,7 @@ public class LOGIN_USER extends javax.swing.JFrame {
         try {
             if (CONEXION.conectar()) {
                 JOptionPane.showMessageDialog(this, "LA CONEXIÓN SE REALIZO CORRECTAMENTE");
-                new MenuPrincipal().setVisible(true);
+                new ORDENES().setVisible(true);
                 this.setVisible(false);
             } else {JOptionPane.showMessageDialog(this, "LA CONEXIÓN FALLO");
             }

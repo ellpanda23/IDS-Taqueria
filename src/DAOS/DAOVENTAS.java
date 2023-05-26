@@ -67,23 +67,6 @@ public class DAOVENTAS {
         return precio;
     }
 
-    public static boolean Act(String N, double cantidad, int id) {
-        try {
-            if (CONEXION.conectar()) {
-                String sql = "UPDATE DETALLESORDEN SET CANTIDAD = ? WHERE orderid= ? and producto =" + "'" + N + "'";
-                PreparedStatement sentencia = CONEXION.conexion.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
-                sentencia.setDouble(1, cantidad);
-                sentencia.setInt(2, id);
-                sentencia.execute();
-                return true;
-            }
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, e);
-            return false;
-        }
-        return false;
-    }
-
     public boolean agregarVarios(List<Ventas> ventas, Ordenes objOrden, int bandera) throws Exception {
         if (bandera == 0) {
             try {
@@ -214,11 +197,11 @@ public class DAOVENTAS {
         ArrayList<Ventas> lista = new ArrayList();
         try {
             if (CONEXION.conectar()) {
-                String sql = "SELECT * FROM DETALLESORDEN WHERE Producto =" +"'"+N+"'" +" and orderid ="+ a;
+                String sql = "SELECT * FROM DETALLESORDEN WHERE Producto =" + "'" + N + "'" + " and orderid =" + a;
                 Statement consulta = CONEXION.conexion.createStatement();
                 ResultSet rsLista = consulta.executeQuery(sql);
                 while (rsLista.next()) {
-                  return true;          
+                    return true;
                 }
                 return false;
             }
@@ -226,9 +209,24 @@ public class DAOVENTAS {
         }
         return false;
     }
-
 //BORRAR PLATILLO
 
+    public static boolean Act(String N, double cantidad, int id) {
+        try {
+            if (CONEXION.conectar()) {
+                String sql = "UPDATE DETALLESORDEN SET CANTIDAD = ? WHERE orderid= ? and producto =" + "'" + N + "'";
+                PreparedStatement sentencia = CONEXION.conexion.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
+                sentencia.setDouble(1, cantidad);
+                sentencia.setInt(2, id);
+                sentencia.execute();
+                return true;
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, e);
+            return false;
+        }
+        return false;
+    }
     public boolean BorrarProducto(String a, int b) {
         try {
             if (CONEXION.conectar()) {
@@ -329,5 +327,4 @@ public class DAOVENTAS {
             throw new Exception("No se ha podido realizar la operación " + ex);
         }
     }
-
 }

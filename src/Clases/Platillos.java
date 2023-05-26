@@ -17,7 +17,6 @@ public class Platillos {
         this.idproducto = idproducto;
         this.Nombre = Nombre;
     }
-
     
     public Platillos(int idproducto, String nombre, double precio)
     {
@@ -49,6 +48,8 @@ public class Platillos {
     public void setPrecio(double precio) {
         this.precio = precio;
     }
+    
+    
 
 
 }
